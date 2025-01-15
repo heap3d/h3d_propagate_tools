@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package version="801">
+	<kit name="h3d_propagate_tools" restart="YES">
+		<source target="h3d_propagate_tools/index.cfg">index.cfg</source>
+		<source target="h3d_propagate_tools/scripts/select_instances.py">scripts/select_instances.py</source>
+	</kit>
+	<message button="Help">h3d_propagate_tools Kit installation complete.</message>
+</package>
