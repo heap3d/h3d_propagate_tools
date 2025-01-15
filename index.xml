@@ -3,6 +3,10 @@
 	<kit name="h3d_propagate_tools" restart="YES">
 		<source target="h3d_propagate_tools/index.cfg">index.cfg</source>
 		<source target="h3d_propagate_tools/scripts/select_instances.py">scripts/select_instances.py</source>
+		<source target="h3d_propagate_tools/scripts/select_source_of_instance.py">scripts/select_source_of_instance.py</source>
+		<source target="h3d_propagate_tools/scripts/propagate_hierarchy.py">scripts/propagate_hierarchy.py</source>
+		<source target="h3d_propagate_tools/scripts/propagate_item.py">scripts/propagate_item.py</source>
+		<source target="h3d_propagate_tools/scripts/replace_by_instance.py">scripts/replace_by_instance.py</source>
 	</kit>
 	<message button="Help">h3d_propagate_tools Kit installation complete.</message>
 </package>
