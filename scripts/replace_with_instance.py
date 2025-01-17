@@ -4,5 +4,5 @@
 # heap3d@gmail.com
 # --------------------------------
 # modo python
-# Instance and align the last selected to the selected items
+# Replace selected items with the instance of last selected
 # ================================

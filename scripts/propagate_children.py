@@ -4,5 +4,5 @@
 # heap3d@gmail.com
 # --------------------------------
 # modo python
-# Instance and align the last selected to the selected items
+# Propagate children to the selected items
 # ================================
