@@ -3,6 +3,7 @@
 	<kit name="h3d_propagate_tools" restart="YES">
 		<source target="h3d_propagate_tools/index.cfg">index.cfg</source>
 		<source target="h3d_propagate_tools/scripts/propagate_children.py">scripts/propagate_children.py</source>
+		<source target="h3d_propagate_tools/scripts/propagate_item_offset.py">scripts/propagate_item_offset.py</source>
 		<source target="h3d_propagate_tools/scripts/propagate_item.py">scripts/propagate_item.py</source>
 		<source target="h3d_propagate_tools/scripts/replace_with_instance.py">scripts/replace_with_instance.py</source>
 		<source target="h3d_propagate_tools/scripts/select_by_name.py">scripts/select_by_name.py</source>

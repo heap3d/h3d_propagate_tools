@@ -4,5 +4,5 @@
 # heap3d@gmail.com
 # --------------------------------
 # modo python
-# Propagate children of the last selected to the children of selected items
+# Instance and align the last selected to the selected items. The two last selected items define the offset.
 # ================================
