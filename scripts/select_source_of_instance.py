@@ -7,8 +7,6 @@
 # Select a source of the instance item
 # ================================
 
-from typing import Union
-
 import modo
 
 
@@ -29,11 +27,16 @@ def main():
         item.select()
 
 
-def get_instance_source(instance: modo.Item) -> Union[None, modo.Item]:
+def get_instance_source(instance: modo.Item) -> modo.Item:
+    if instance is None:
+        raise ValueError('instance item error: value is None')
+    if not instance.isAnInstance:
+        return instance
+
     try:
         return instance.itemGraph('source').forward()[0]  # type:ignore
     except IndexError:
-        return None
+        raise ValueError('Failed to get source of instance from item graph "source"')
 
 
 if __name__ == '__main__':

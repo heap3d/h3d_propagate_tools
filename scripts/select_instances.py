@@ -26,7 +26,10 @@ def main():
 
 
 def get_instances(item: modo.Item) -> list[modo.Item]:
-    return list(item.itemGraph('source').reverse())  # type:ignore
+    instances = item.itemGraph('source').reverse()
+    if not isinstance(instances, list):
+        raise ValueError(f'Error getting instances for the <{item.name}> item')
+    return instances
 
 
 if __name__ == '__main__':
