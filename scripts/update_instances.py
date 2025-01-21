@@ -4,8 +4,10 @@
 # heap3d@gmail.com
 # --------------------------------
 # modo python
-# Instance and align the last selected to the selected items. The two last selected items define the offset.
+# replace source of instances without changing their position
 # ================================
+
+from math import degrees
 
 import lx
 import modo
@@ -13,6 +15,9 @@ import modo.constants as c
 from modo.mathutils import Vector3
 
 from h3d_propagate_tools.scripts.replace_with_instance import match_pos_rot, match_scl
+from h3d_propagate_tools.scripts.select_instances import get_instances
+
+from h3d_utilites.scripts.h3d_debug import h3dd, prints, fn_in, fn_out
 
 
 class Offset:
@@ -23,18 +28,20 @@ class Offset:
 
 
 def main():
-    selected = modo.Scene().selectedByType(itype=c.LOCATOR_TYPE, superType=True)
-    offset_item = selected[-2]
-    source_item = selected[-1]
-    targets = selected[:-1]
+    selected = modo.Scene().selectedByType(itype=c.MESH_TYPE)
+    newmesh = selected[0]
+    oldmesh = selected[1]
+    targets = get_instances(oldmesh)
 
-    offset = get_offset(source=offset_item, target=source_item)
+    offset = get_offset(source=oldmesh, target=newmesh)
 
     for target in targets:
-        instance_item = instance(target, children=True)
+        instance_item = instance(newmesh)
         match_pos_rot(instance_item, target)
         match_scl(instance_item, target)
         apply_offset(instance_item, offset)
+
+    # modo.Scene().removeItems(oldmesh, children=True)
 
 
 def get_offset(source: modo.Item, target: modo.Item) -> Offset:
@@ -99,13 +106,53 @@ def get_scl(item: modo.Item) -> Vector3:
     return Vector3(x, y, z)
 
 
-def instance(item: modo.Item, children: bool) -> modo.Item:
-    ...
+def instance(item: modo.Item) -> modo.Item:
+    item.select(replace=True)
+    lx.eval('item.duplicate true all:true')
+    newitem = modo.Scene().selected[0]
+    return newitem
 
 
 def apply_offset(item: modo.Item, offset: Offset):
-    ...
+    pos = get_pos(item)
+    rot = get_rot(item)
+    scl = get_scl(item)
+
+    new_pos = pos + offset.pos
+
+    new_rot: Vector3 = Vector3()
+    new_rot.x = rot.x + offset.rot.x
+    new_rot.y = rot.y + offset.rot.y
+    new_rot.z = rot.z + offset.rot.z
+
+    new_scl: Vector3 = Vector3()
+    new_scl.x = scl.x * offset.scl.x
+    new_scl.y = scl.y * offset.scl.y
+    new_scl.z = scl.z * offset.scl.z
+
+    set_pos(item, new_pos)
+    set_rot(item, new_rot)
+    set_scl(item, new_scl)
+
+
+def set_pos(item: modo.Item, pos: Vector3):
+    lx.eval(f'transform.channel pos.X {pos.x} item:{{{item.id}}}')
+    lx.eval(f'transform.channel pos.Y {pos.y} item:{{{item.id}}}')
+    lx.eval(f'transform.channel pos.Z {pos.z} item:{{{item.id}}}')
+
+
+def set_rot(item: modo.Item, rot: Vector3):
+    lx.eval(f'transform.channel rot.X {degrees(rot.x)} item:{{{item.id}}}')
+    lx.eval(f'transform.channel rot.Y {degrees(rot.y)} item:{{{item.id}}}')
+    lx.eval(f'transform.channel rot.Z {degrees(rot.z)} item:{{{item.id}}}')
+
+
+def set_scl(item: modo.Item, scl: Vector3):
+    lx.eval(f'transform.channel scl.X {scl.x} item:{{{item.id}}}')
+    lx.eval(f'transform.channel scl.Y {scl.y} item:{{{item.id}}}')
+    lx.eval(f'transform.channel scl.Z {scl.z} item:{{{item.id}}}')
 
 
 if __name__ == '__main__':
+    h3dd.enable_debug_output()
     main()
