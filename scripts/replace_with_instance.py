@@ -83,12 +83,13 @@ def get_parent_index(item: modo.Item) -> int:
     return 0
 
 
-def parent_items_to(items: list[modo.Item], parent: Union[None, modo.Item], index=0):
+def parent_items_to(items: list[modo.Item], parent: Union[None, modo.Item], index=0, inplace=True):
+    inplace_num = 1 if inplace else 0
     for item in items:
         if not parent:
-            lx.eval(f"item.parent item:{{{item.id}}} parent:{{}} position:{index} inPlace:1")
+            lx.eval(f"item.parent item:{{{item.id}}} parent:{{}} position:{index} inPlace:{inplace_num}")
         else:
-            lx.eval(f"item.parent item:{{{item.id}}} parent:{{{parent.id}}} position:{index} inPlace:1")
+            lx.eval(f"item.parent item:{{{item.id}}} parent:{{{parent.id}}} position:{index} inPlace:{inplace_num}")
 
 
 def match_pos_rot(item: modo.Item, itemTo: modo.Item):
