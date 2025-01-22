@@ -15,15 +15,15 @@ from h3d_propagate_tools.scripts.replace_with_instance import match_pos_rot, par
 from h3d_propagate_tools.scripts.select_instances import get_instances
 
 
-CMD_NAME = 'Update Instances'
-ERRMSG_MESHES = 'Please select two mesh items to run the command.'
+DIALOG_TITLE = 'Update Instances'
+ERRMSG_SELECT2MESHES = 'Please select two mesh items to run the command.'
 
 
 def main():
     selected = modo.Scene().selectedByType(itype=c.MESH_TYPE)
     if len(selected) < 2:
-        print(ERRMSG_MESHES)
-        modo.dialogs.alert(CMD_NAME, ERRMSG_MESHES)
+        print(DIALOG_TITLE, ERRMSG_SELECT2MESHES)
+        modo.dialogs.alert(DIALOG_TITLE, ERRMSG_SELECT2MESHES)
         return
 
     newmesh: modo.Item = selected[-2]

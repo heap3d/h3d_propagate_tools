@@ -17,12 +17,16 @@ from h3d_propagate_tools.scripts.select_source_of_instance import get_instance_s
 
 TMP_SUFFIX = '_tmp'
 
+DIALOG_TITLE = 'Replace Items with Instance'
+ERRMSG_SELECTMORE = 'Please select two or more items to run the command.'
+
 
 def main():
     scene = modo.Scene()
     selected = scene.selectedByType(c.LOCATOR_TYPE, superType=True)
-    if not selected:
-        print('None selected')
+    if len(selected) < 2:
+        print(DIALOG_TITLE, ERRMSG_SELECTMORE)
+        modo.dialogs.alert(DIALOG_TITLE, ERRMSG_SELECTMORE)
         return
     source = selected[-1]
     target_candidates = selected[:-1]
