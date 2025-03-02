@@ -15,6 +15,8 @@ import lx
 
 from h3d_propagate_tools.scripts.select_source_of_instance import get_instance_source
 
+from h3d_utilites.scripts.h3d_debug import prints, fn_in, fn_out
+
 TMP_SUFFIX = '_tmp'
 
 DIALOG_TITLE = 'Replace Items with Instance'
@@ -22,6 +24,7 @@ ERRMSG_SELECTMORE = 'Please select two or more items to run the command.'
 
 
 def main():
+    fn_in()
     scene = modo.Scene()
     selected = scene.selectedByType(c.LOCATOR_TYPE, superType=True)
     if len(selected) < 2:
@@ -30,25 +33,38 @@ def main():
         return
     source = selected[-1]
     target_candidates = selected[:-1]
-    targets = filter(lambda i: i.type != 'groupLocator', target_candidates)
+    targets = tuple(filter(lambda i: i.type != 'groupLocator', target_candidates))
 
     new_items: list[modo.Item] = []
+    prints(targets)
     for target in targets:
         new_items.append(replace_with_instance(source_item=source, target_item=target))
 
+    prints(target_candidates)
     for item in target_candidates:
         try:
+            prints('removing item')
+            prints(item)
             modo.Scene().removeItems(item, children=True)
+            prints('successfull')
         except LookupError:
+            prints('failed')
             print('removeItemsError')
 
     lx.eval('select.type item')
     modo.Scene().deselect()
     for item in new_items:
+        prints('selecting')
+        prints(item)
         item.select()
+
+    fn_out()
 
 
 def replace_with_instance(source_item: modo.Item, target_item: modo.Item) -> modo.Item:
+    fn_in()
+    prints(source_item)
+    prints(target_item)
     if not source_item:
         raise ValueError('Source item error: value is None')
     if not target_item:
@@ -68,6 +84,7 @@ def replace_with_instance(source_item: modo.Item, target_item: modo.Item) -> mod
 
     replace_item(remove_item=target_item, insert_item=instance_item)
 
+    fn_out()
     return instance_item
 
 
