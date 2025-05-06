@@ -7,6 +7,8 @@
 # Instance and align the last selected to the selected items
 # ================================
 
+from typing import Iterable
+
 import modo
 import modo.constants as c
 
@@ -27,10 +29,18 @@ def main():
     source_item: modo.Item = selected[-1]
     targets: list[modo.Item] = selected[:-1]
 
+    make_aligned_instances(source_item, targets)
+
+
+def make_aligned_instances(source: modo.Item, targets: Iterable) -> tuple[modo.Item, ...]:
+    instances: set[modo.Item] = set()
     for target in targets:
-        instance_item = make_instance(source_item)
+        instance_item = make_instance(source)
+        instances.add(instance_item)
         match_pos_rot(instance_item, target)
         parent_items_to([instance_item,], target.parent, get_parent_index(target)+1)
+
+    return tuple(instances)
 
 
 if __name__ == '__main__':
