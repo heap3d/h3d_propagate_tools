@@ -34,7 +34,7 @@ def main():
         for item in all_items:
             if item in similar_items:
                 continue
-            is_similar = is_name_similar(item.name, selected_item.name, USERVAL_REGEX_PATTERN)
+            is_similar = is_name_similar(item.name, selected_item.name, get_user_value(USERVAL_REGEX_PATTERN))
             if is_similar:
                 similar_items.add(item)
 
@@ -114,17 +114,27 @@ def get_all_items(visible: bool) -> list[modo.Item]:
 
 
 def is_name_similar(name: str, template: str, regex_pattern=REGEX_PATTERN) -> bool:
-    template_match = re.match(regex_pattern, template)
+    template_match = re.search(regex_pattern, template)
+
     if not template_match:
         template_stripped = template
     else:
-        template_stripped = template_match.group(1)
+        if template_match.groups():
+            template_stripped = template_match.group(1)
+        else:
+            start, end = template_match.span()
+            template_stripped = template[start:end]
 
-    name_match = re.match(regex_pattern, name)
+    name_match = re.search(regex_pattern, name)
+
     if not name_match:
         name_sripped = name
     else:
-        name_sripped = name_match.group(1)
+        if name_match.groups():
+            name_sripped = name_match.group(1)
+        else:
+            start, end = name_match.span()
+            name_sripped = name[start:end]
 
     if template_stripped.strip() == name_sripped.strip():
         return True
