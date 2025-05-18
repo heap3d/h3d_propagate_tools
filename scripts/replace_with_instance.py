@@ -15,7 +15,6 @@ import lx
 
 from h3d_propagate_tools.scripts.select_source_of_instance import get_instance_source
 
-from h3d_utilites.scripts.h3d_debug import prints, fn_in, fn_out
 
 TMP_SUFFIX = '_tmp'
 
@@ -24,7 +23,6 @@ ERRMSG_SELECTMORE = 'Please select two or more items to run the command.'
 
 
 def main():
-    fn_in()
     scene = modo.Scene()
     selected = scene.selectedByType(c.LOCATOR_TYPE, superType=True)
     if len(selected) < 2:
@@ -36,37 +34,22 @@ def main():
     targets = tuple(filter(lambda i: i.type != 'groupLocator', target_candidates))
 
     new_items: list[modo.Item] = []
-    prints(targets)
     for target in targets:
         new_items.append(replace_with_instance(source_item=source, target_item=target))
 
-    prints(target_candidates)
     for item in target_candidates:
         try:
-            prints('removing item')
-            prints(item)
             modo.Scene().removeItems(item, children=True)
-            prints('successfull')
         except LookupError:
-            prints('failed')
             print('removeItemsError')
 
     lx.eval('select.type item')
     modo.Scene().deselect()
     for item in new_items:
-        prints('selecting')
-        prints(item)
         item.select()
-
-    fn_out()
 
 
 def replace_with_instance(source_item: modo.Item, target_item: modo.Item) -> modo.Item:
-    fn_in()
-    prints(source_item)
-    prints(target_item)
-    prints(get_item_scale(source_item))
-    prints(get_item_scale(target_item))
     if not source_item:
         raise ValueError('Source item error: value is None')
     if not target_item:
@@ -82,11 +65,9 @@ def replace_with_instance(source_item: modo.Item, target_item: modo.Item) -> mod
     instance_item.setParent()
     match_pos_rot(instance_item, target_item)
     match_scl(instance_item, target_item)
-    prints(get_ratios(source_item, target_item))
 
     replace_item(remove_item=target_item, insert_item=instance_item)
 
-    fn_out()
     return instance_item
 
 
@@ -152,7 +133,6 @@ def get_source_size(source: modo.Item) -> modo.Vector3:
 
 
 def get_size(item: modo.Item) -> modo.Vector3:
-    prints(item)
     if item.type != 'mesh' and item.type != 'meshInst':
         return modo.Vector3(1, 1, 1)
 
@@ -176,7 +156,6 @@ def get_size(item: modo.Item) -> modo.Vector3:
 
 
 def get_item_scale(item: modo.Item) -> modo.Vector3:
-    prints(item)
     item.select(replace=True)
     x = lx.eval(f'transform.channel scl.X ? item:{{{item.id}}}')
     if x is None:
@@ -187,8 +166,6 @@ def get_item_scale(item: modo.Item) -> modo.Vector3:
     z = lx.eval(f'transform.channel scl.Z ? item:{{{item.id}}}')
     if z is None:
         z = 1.0
-
-    prints(modo.Vector3(x, y, z))
 
     return modo.Vector3(x, y, z)
 
