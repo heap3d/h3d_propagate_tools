@@ -13,11 +13,9 @@ from h3d_propagate_tools.scripts.select_by_regex import (
     get_user_value,
     get_selected,
     get_all_items,
-    is_name_similar
+    is_name_similar,
+    USERVAL_IGNORE_HIDDEN
 )
-
-
-USERVAL_IGNORE_HIDDEN = 'h3d_propagate_ignore_hidden'
 
 
 def main():
