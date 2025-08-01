@@ -15,7 +15,7 @@ import modo.constants as c
 
 
 from scripts.propagate_item import DIALOG_TITLE, ERRMSG_SELECTMORE, make_aligned_instances
-from scripts.replace_with_instance import parent_items_to, get_parent_index
+from scripts.utilites import parent_items_to, get_parent_index
 
 
 def main():

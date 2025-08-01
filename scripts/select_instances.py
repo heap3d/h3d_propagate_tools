@@ -9,6 +9,8 @@
 
 import modo
 
+from scripts.utilites import get_instances
+
 
 def main():
     selected = modo.Scene().selected
@@ -23,13 +25,6 @@ def main():
     modo.Scene().deselect()
     for item in items_used:
         item.select()
-
-
-def get_instances(item: modo.Item) -> list[modo.Item]:
-    instances = item.itemGraph('source').reverse()
-    if not isinstance(instances, list):
-        raise ValueError(f'Error getting instances for the <{item.name}> item')
-    return instances
 
 
 if __name__ == '__main__':

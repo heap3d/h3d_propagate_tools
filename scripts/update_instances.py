@@ -7,12 +7,16 @@
 # replace source of instances without changing their position
 # ================================
 
-import lx
 import modo
 import modo.constants as c
 
-from h3d_propagate_tools.scripts.replace_with_instance import match_pos_rot, parent_items_to, get_parent_index
-from h3d_propagate_tools.scripts.select_instances import get_instances
+from scripts.utilites import (
+    match_pos_rot,
+    parent_items_to,
+    get_parent_index,
+    get_instances,
+    make_instance,
+)
 
 
 DIALOG_TITLE = 'Update Instances'
@@ -44,13 +48,6 @@ def main():
 
     modo.Scene().removeItems(tmp_loc)
     modo.Scene().removeItems(oldmesh, children=True)
-
-
-def make_instance(item: modo.Item) -> modo.Item:
-    item.select(replace=True)
-    lx.eval('item.duplicate true all:true')
-    newitem = modo.Scene().selected[0]
-    return newitem
 
 
 if __name__ == '__main__':

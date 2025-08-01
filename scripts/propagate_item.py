@@ -12,8 +12,12 @@ from typing import Iterable
 import modo
 import modo.constants as c
 
-from h3d_propagate_tools.scripts.update_instances import make_instance
-from h3d_propagate_tools.scripts.replace_with_instance import parent_items_to, match_pos_rot, get_parent_index
+from scripts.utilites import (
+    make_instance,
+    match_pos_rot,
+    parent_items_to,
+    get_parent_index,
+)
 
 
 DIALOG_TITLE = 'Propagate Item'

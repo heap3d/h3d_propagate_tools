@@ -9,7 +9,7 @@
 
 import modo
 
-from h3d_propagate_tools.scripts.select_by_regex import (
+from scripts.utilites import (
     get_user_value,
     get_selected,
     get_all_items,

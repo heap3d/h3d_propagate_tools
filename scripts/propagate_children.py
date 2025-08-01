@@ -10,8 +10,7 @@
 import modo
 import modo.constants as c
 
-from h3d_propagate_tools.scripts.update_instances import make_instance
-from h3d_propagate_tools.scripts.replace_with_instance import parent_items_to
+from scripts.utilites import make_instance, parent_items_to
 
 
 DIALOG_TITLE = 'Propagate Children'
