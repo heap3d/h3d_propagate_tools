@@ -35,7 +35,7 @@ def main():
     for mesh in selected_meshes:
         if not mesh.geometry.numVertices:
             continue
-        
+
         original_parent = mesh.parent
         original_parent_index = get_parent_index(mesh)
         select_components(mesh, selected_components[mesh], select_type)

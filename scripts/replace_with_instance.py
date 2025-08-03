@@ -16,8 +16,9 @@ from scripts.utilites import (
     match_scl,
     parent_items_to,
     get_parent_index,
-    get_instance_source,
 )
+
+from scripts.center_utilites import get_instance_source
 
 
 TMP_SUFFIX = '_tmp'

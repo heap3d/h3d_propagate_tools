@@ -8,7 +8,7 @@
 # utilites for propagate tools
 # ================================
 
-from typing import Optional
+from typing import Optional, Any
 
 import modo
 import lx
@@ -71,3 +71,16 @@ def duplicate_item(item: modo.Item) -> modo.Item:
         raise TypeError('Item duplication error.')
 
     return copy
+
+
+def get_user_value(name: str) -> Any:
+    """gets user value by name
+
+    Args:
+        name (str): user value name
+
+    Returns:
+        Any: user value
+    """
+    value = lx.eval('user.value {} ?'.format(name))
+    return value

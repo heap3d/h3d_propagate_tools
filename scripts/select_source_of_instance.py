@@ -9,7 +9,7 @@
 
 import modo
 
-from scripts.utilites import get_instance_source
+from scripts.center_utilites import get_instance_source
 
 
 def main():

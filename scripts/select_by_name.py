@@ -11,10 +11,13 @@ import modo
 
 from scripts.utilites import (
     get_user_value,
+)
+
+from scripts.center_utilites import (
+    USERVAL_IGNORE_HIDDEN,
     get_selected,
     get_all_items,
     is_name_similar,
-    USERVAL_IGNORE_HIDDEN
 )
 
 
