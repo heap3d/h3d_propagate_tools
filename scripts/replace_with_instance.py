@@ -11,7 +11,7 @@ import modo
 import modo.constants as c
 import lx
 
-from scripts.utilites import (
+from h3d_propagate_tools.scripts.utilites import (
     match_pos_rot,
     match_scl,
     parent_items_to,

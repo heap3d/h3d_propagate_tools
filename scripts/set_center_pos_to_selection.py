@@ -12,9 +12,9 @@ import modo
 import modo.constants as c
 import lx
 
-from h3d_utilites.scripts.h3d_utils import get_select_type, duplicate_item, parent_items_to, get_parent_index
+from h3d_propagate_tools.scripts.utilites import get_select_type, duplicate_item, parent_items_to, get_parent_index
 
-from scripts.center_utilites import (
+from h3d_propagate_tools.scripts.center_utilites import (
     get_selected_components,
     select_components,
     create_loc_at_selection,
@@ -40,7 +40,10 @@ def main():
         original_parent_index = get_parent_index(mesh)
         select_components(mesh, selected_components[mesh], select_type)
 
-        original_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE)
+        original_loc: modo.Item = modo.Scene().addItem(itype=c.LOCATOR_TYPE)
+        if not original_loc:
+            raise RuntimeError('Failed to create locator.')
+
         parent_items_to((original_loc,), mesh, inplace=False)
         parent_items_to((original_loc,), None, inplace=True)
 

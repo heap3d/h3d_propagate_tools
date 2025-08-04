@@ -8,21 +8,24 @@
 # utilites for propagate tools
 # ================================
 
-from typing import Optional, Any
+from typing import Optional, Any, Iterable
 
 import modo
 import lx
 
 
 ITEM = 'item'
+PIVOT = 'pivot'
+CENTER = 'center'
 VERTEX = 'vertex'
 EDGE = 'edge'
 POLYGON = 'polygon'
+PTAG = 'ptag'
 
 COLOR_PROCESSED = 'orange'
 
 
-def parent_items_to(items: list[modo.Item], parent: Optional[modo.Item], index=0, inplace=True):
+def parent_items_to(items: Iterable[modo.Item], parent: Optional[modo.Item], index=0, inplace=True):
     inplace_num = 1 if inplace else 0
     for item in items:
         if not parent:
@@ -84,3 +87,22 @@ def get_user_value(name: str) -> Any:
     """
     value = lx.eval('user.value {} ?'.format(name))
     return value
+
+
+def get_select_type():
+    if lx.eval('select.typeFrom item;pivot;center;edge;polygon;vertex;ptag ?'):
+        return ITEM
+    if lx.eval('select.typeFrom pivot;center;edge;polygon;vertex;ptag;item ?'):
+        return PIVOT
+    if lx.eval('select.typeFrom center;edge;polygon;vertex;ptag;item;pivot ?'):
+        return CENTER
+    if lx.eval('select.typeFrom vertex;ptag;item;pivot;center;edge;polygon ?'):
+        return VERTEX
+    if lx.eval('select.typeFrom edge;polygon;vertex;ptag;item;pivot;center ?'):
+        return EDGE
+    if lx.eval('select.typeFrom polygon;vertex;ptag;item;pivot;center;edge ?'):
+        return POLYGON
+    if lx.eval('select.typeFrom ptag;item;pivot;center;edge;polygon;vertex ?'):
+        return PTAG
+
+    raise ValueError('Unknown select type')

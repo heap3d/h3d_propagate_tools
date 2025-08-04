@@ -11,7 +11,7 @@
 import modo
 import modo.constants as c
 
-from h3d_utilites.scripts.h3d_utils import (
+from h3d_propagate_tools.scripts.utilites import (
     get_select_type,
     duplicate_item,
 )

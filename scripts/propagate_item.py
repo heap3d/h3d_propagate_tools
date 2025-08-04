@@ -12,7 +12,7 @@ from typing import Iterable
 import modo
 import modo.constants as c
 
-from scripts.utilites import (
+from h3d_propagate_tools.scripts.utilites import (
     make_instance,
     match_pos_rot,
     parent_items_to,
