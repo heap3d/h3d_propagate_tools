@@ -11,11 +11,11 @@
 import modo
 
 
-from scripts.utilites import (
+from h3d_propagate_tools.scripts.utilites import (
     get_user_value,
 )
 
-from scripts.center_utilites import (
+from h3d_propagate_tools.scripts.center_utilites import (
     USERVAL_IGNORE_HIDDEN,
     USERVAL_REGEX_PATTERN,
     get_selected,

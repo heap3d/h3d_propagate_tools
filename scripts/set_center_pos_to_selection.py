@@ -12,9 +12,9 @@ import modo
 import modo.constants as c
 import lx
 
-from scripts.utilites import get_select_type, duplicate_item, parent_items_to, get_parent_index
+from h3d_propagate_tools.scripts.utilites import get_select_type, duplicate_item, parent_items_to, get_parent_index
 
-from scripts.center_utilites import (
+from h3d_propagate_tools.scripts.center_utilites import (
     get_selected_components,
     select_components,
     create_loc_at_selection,

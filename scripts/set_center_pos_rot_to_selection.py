@@ -11,12 +11,12 @@
 import modo
 import modo.constants as c
 
-from scripts.utilites import (
+from h3d_propagate_tools.scripts.utilites import (
     get_select_type,
     duplicate_item,
 )
 
-from scripts.center_utilites import (
+from h3d_propagate_tools.scripts.center_utilites import (
     get_selected_components,
     select_components,
     place_center_at_locator,
