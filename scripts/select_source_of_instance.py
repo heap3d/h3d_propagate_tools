@@ -9,7 +9,7 @@
 
 import modo
 
-from h3d_propagate_tools.scripts.center_utilites import get_instance_source
+from scripts.center_utilites import get_instance_source
 
 
 def main():

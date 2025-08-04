@@ -14,7 +14,7 @@ import modo
 import modo.constants as c
 import lx
 
-from h3d_propagate_tools.scripts.utilites import (
+from scripts.utilites import (
     ITEM,
     VERTEX,
     EDGE,

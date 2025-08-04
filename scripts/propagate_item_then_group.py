@@ -14,8 +14,8 @@ import modo
 import modo.constants as c
 
 
-from h3d_propagate_tools.scripts.propagate_item import DIALOG_TITLE, ERRMSG_SELECTMORE, make_aligned_instances
-from h3d_propagate_tools.scripts.utilites import parent_items_to, get_parent_index
+from scripts.propagate_item import DIALOG_TITLE, ERRMSG_SELECTMORE, make_aligned_instances
+from scripts.utilites import parent_items_to, get_parent_index
 
 
 def main():

@@ -10,7 +10,7 @@
 import modo
 import modo.constants as c
 
-from h3d_propagate_tools.scripts.utilites import (
+from scripts.utilites import (
     match_pos_rot,
     parent_items_to,
     get_parent_index,
