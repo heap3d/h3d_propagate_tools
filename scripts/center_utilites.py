@@ -85,7 +85,12 @@ def create_loc_at_selection(mesh: modo.Mesh, select_type: str, orient: bool) -> 
     mesh.select(replace=True)
     lx.eval(f'item.editorColor {COLOR_PROCESSED}')
 
-    drop_components_selection_if_not_component_mode(select_type)
+    if not is_component_mode(select_type):
+        drop_components_selection()
+        lx.eval(f'select.type {VERTEX}')
+    else:
+        lx.eval(f'select.type {select_type}')
+
     lx.eval('workPlane.fitSelect')
     drop_components_selection()
 
@@ -102,12 +107,8 @@ def create_loc_at_selection(mesh: modo.Mesh, select_type: str, orient: bool) -> 
     return locator
 
 
-def drop_components_selection_if_not_component_mode(select_type: str):
-    if select_type not in (VERTEX, EDGE, POLYGON):
-        drop_components_selection()
-        lx.eval(f'select.type {VERTEX}')
-    else:
-        lx.eval(f'select.type {select_type}')
+def is_component_mode(select_type: str) -> bool:
+    return select_type in (VERTEX, EDGE, POLYGON)
 
 
 def drop_components_selection():
