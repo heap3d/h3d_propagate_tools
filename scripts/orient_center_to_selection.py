@@ -17,7 +17,7 @@ from h3d_propagate_tools.scripts.utilites import (
     duplicate_item,
     parent_items_to,
     get_parent_index,
-    match_pos,
+    match_rot,
     match_pos_rot,
 )
 
@@ -56,7 +56,7 @@ def main():
         mesh.select(replace=True)
         lx.eval('transform.reset all')
 
-        selection_center_loc = create_loc_at_selection(mesh, select_type, orient=False)
+        selection_center_loc = create_loc_at_selection(mesh, select_type, orient=True)
         selection_center_loc.name = 'selection_center_loc'
 
         legacy_center_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name='legacy_center_loc')
@@ -65,7 +65,7 @@ def main():
         new_center_loc = duplicate_item(legacy_center_loc)
         new_center_loc.name = 'new_center_loc'
 
-        match_pos(new_center_loc, selection_center_loc)
+        match_rot(new_center_loc, selection_center_loc)
         modo.Scene().removeItems(selection_center_loc)
 
         parent_items_to((new_center_loc,), mesh, inplace=True)

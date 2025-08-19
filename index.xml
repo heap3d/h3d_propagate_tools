@@ -3,6 +3,7 @@
 	<kit name="h3d_propagate_tools" restart="YES">
 		<source target="h3d_propagate_tools/scripts/center_utilites.py">scripts/center_utilites.py</source>
 		<source target="h3d_propagate_tools/scripts/move_center_pos_to_selection.py">scripts/move_center_pos_to_selection.py</source>
+		<source target="h3d_propagate_tools/scripts/orient_center_to_selection.py">scripts/orient_center_to_selection.py</source>
 		<source target="h3d_propagate_tools/scripts/propagate_children.py">scripts/propagate_children.py</source>
 		<source target="h3d_propagate_tools/scripts/propagate_item_then_group.py">scripts/propagate_item_then_group.py</source>
 		<source target="h3d_propagate_tools/scripts/propagate_item.py">scripts/propagate_item.py</source>
