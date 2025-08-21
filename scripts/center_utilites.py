@@ -25,6 +25,7 @@ from h3d_propagate_tools.scripts.utilites import (
     make_instance,
     match_pos_rot,
     match_scl,
+    itype_str,
 )
 
 
@@ -122,7 +123,7 @@ def drop_components_selection():
     lx.eval(f'select.drop {POLYGON}')
 
 
-def place_center_at_locator(mesh: modo.Mesh, locator: modo.Item):
+def place_center_at_locator(mesh: modo.Mesh, locator: modo.Item) -> modo.Mesh:
     if not mesh or not isinstance(mesh, modo.Mesh):
         raise TypeError('No mesh provided.')
 
@@ -147,8 +148,11 @@ def place_center_at_locator(mesh: modo.Mesh, locator: modo.Item):
         parent.select()
         lx.eval(f'item.parent inPlace:1 position:{hierarchy_index}')
 
+    return mesh
 
-def update_instance(newmesh: modo.Mesh, oldmesh: modo.Mesh):
+
+def update_instance(newmesh: modo.Mesh, oldmesh: modo.Mesh) -> list[modo.Mesh]:
+    updated_instances = []
     targets = get_instances(oldmesh)
 
     parent_items_to([newmesh,], oldmesh.parent, get_parent_index(oldmesh))
@@ -156,6 +160,8 @@ def update_instance(newmesh: modo.Mesh, oldmesh: modo.Mesh):
     tmp_loc = modo.Scene().addItem(itype='locator')
     for target in targets:
         instance_item = make_instance(newmesh)
+        if instance_item.type != itype_str(c.MESHINST_TYPE):
+            raise TypeError('Failed to create mesh instance item.')
 
         match_pos_rot(tmp_loc, oldmesh)
         parent_items_to([instance_item,], tmp_loc)
@@ -164,8 +170,12 @@ def update_instance(newmesh: modo.Mesh, oldmesh: modo.Mesh):
         match_scl(tmp_loc, target)
         parent_items_to([instance_item,], target.parent, get_parent_index(target))
 
+        updated_instances.append(instance_item)
+
     modo.Scene().removeItems(tmp_loc)
     modo.Scene().removeItems(oldmesh, children=True)
+
+    return updated_instances
 
 
 def get_instance_source(instance: modo.Item) -> modo.Item:

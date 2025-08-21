@@ -10,12 +10,16 @@
 import modo
 import modo.constants as c
 
-from h3d_propagate_tools.scripts.utilites import (
-    match_pos_rot,
-    parent_items_to,
-    get_parent_index,
-    get_instances,
-    make_instance,
+# from h3d_propagate_tools.scripts.utilites import (
+#     match_pos_rot,
+#     parent_items_to,
+#     get_parent_index,
+#     get_instances,
+#     make_instance,
+# )
+
+from h3d_propagate_tools.scripts.center_utilites import (
+    update_instance,
 )
 
 
@@ -32,22 +36,28 @@ def main():
 
     newmesh: modo.Item = selected[-2]
     oldmesh: modo.Item = selected[-1]
-    targets = get_instances(oldmesh)
 
-    parent_items_to([newmesh,], oldmesh.parent, get_parent_index(oldmesh))
+    if not isinstance(newmesh, modo.Mesh) or not isinstance(oldmesh, modo.Mesh):
+        raise TypeError('Both selected items must be mesh items.')
 
-    tmp_loc = modo.Scene().addItem(itype='locator')
-    for target in targets:
-        instance_item = make_instance(newmesh)
+    update_instance(newmesh, oldmesh)
 
-        match_pos_rot(tmp_loc, oldmesh)
-        parent_items_to([instance_item,], tmp_loc)
+    # targets = get_instances(oldmesh)
 
-        match_pos_rot(tmp_loc, target)
-        parent_items_to([instance_item,], target.parent, get_parent_index(target))
+    # parent_items_to([newmesh,], oldmesh.parent, get_parent_index(oldmesh))
 
-    modo.Scene().removeItems(tmp_loc)
-    modo.Scene().removeItems(oldmesh, children=True)
+    # tmp_loc = modo.Scene().addItem(itype='locator')
+    # for target in targets:
+    #     instance_item = make_instance(newmesh)
+
+    #     match_pos_rot(tmp_loc, oldmesh)
+    #     parent_items_to([instance_item,], tmp_loc)
+
+    #     match_pos_rot(tmp_loc, target)
+    #     parent_items_to([instance_item,], target.parent, get_parent_index(target))
+
+    # modo.Scene().removeItems(tmp_loc)
+    # modo.Scene().removeItems(oldmesh, children=True)
 
 
 if __name__ == '__main__':

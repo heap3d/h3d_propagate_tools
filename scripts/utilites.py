@@ -8,7 +8,7 @@
 # utilites for propagate tools
 # ================================
 
-from typing import Optional, Any, Iterable
+from typing import Optional, Any, Iterable, Union
 
 import modo
 import lx
@@ -114,3 +114,19 @@ def get_select_type():
         return PTAG
 
     raise ValueError('Unknown select type')
+
+
+def itype_str(type_int: Union[int, None]) -> str:
+    """convert int modo item type to str type.
+    example: c.MESH_TYPE to 'mesh'"""
+    if type_int is None:
+        raise TypeError
+
+    if isinstance(type_int, str):
+        return str(type_int)
+
+    str_type = lx.service.Scene().ItemTypeName(type_int)
+    if str_type is None:
+        raise TypeError
+
+    return str_type
