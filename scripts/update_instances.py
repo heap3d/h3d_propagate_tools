@@ -10,14 +10,6 @@
 import modo
 import modo.constants as c
 
-# from h3d_propagate_tools.scripts.utilites import (
-#     match_pos_rot,
-#     parent_items_to,
-#     get_parent_index,
-#     get_instances,
-#     make_instance,
-# )
-
 from h3d_propagate_tools.scripts.center_utilites import (
     update_instance,
 )
@@ -41,23 +33,6 @@ def main():
         raise TypeError('Both selected items must be mesh items.')
 
     update_instance(newmesh, oldmesh)
-
-    # targets = get_instances(oldmesh)
-
-    # parent_items_to([newmesh,], oldmesh.parent, get_parent_index(oldmesh))
-
-    # tmp_loc = modo.Scene().addItem(itype='locator')
-    # for target in targets:
-    #     instance_item = make_instance(newmesh)
-
-    #     match_pos_rot(tmp_loc, oldmesh)
-    #     parent_items_to([instance_item,], tmp_loc)
-
-    #     match_pos_rot(tmp_loc, target)
-    #     parent_items_to([instance_item,], target.parent, get_parent_index(target))
-
-    # modo.Scene().removeItems(tmp_loc)
-    # modo.Scene().removeItems(oldmesh, children=True)
 
 
 if __name__ == '__main__':

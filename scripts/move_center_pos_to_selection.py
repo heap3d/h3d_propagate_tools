@@ -14,7 +14,7 @@ import lx
 
 from h3d_propagate_tools.scripts.utilites import (
     get_select_type,
-    duplicate_item,
+    duplicate_item_and_hierarchy,
     parent_items_to,
     get_parent_index,
     match_pos,
@@ -62,7 +62,7 @@ def main():
         legacy_center_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name='legacy_center_loc')
         match_pos_rot(legacy_center_loc, mesh)
 
-        new_center_loc = duplicate_item(legacy_center_loc)
+        new_center_loc = duplicate_item_and_hierarchy(legacy_center_loc)
         new_center_loc.name = 'new_center_loc'
 
         match_pos(new_center_loc, selection_center_loc)
@@ -74,7 +74,7 @@ def main():
         modo.Scene().removeItems(original_loc)
         modo.Scene().removeItems(legacy_center_loc)
 
-        new_mesh = duplicate_item(mesh)
+        new_mesh = duplicate_item_and_hierarchy(mesh)
         if not isinstance(new_mesh, modo.Mesh):
             raise TypeError('Failed to duplicate mesh.')
 

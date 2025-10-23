@@ -15,7 +15,7 @@ import modo.constants as c
 
 from h3d_propagate_tools.scripts.utilites import (
     itype_str,
-    duplicate_item,
+    duplicate_item_and_hierarchy,
 )
 
 from h3d_propagate_tools.scripts.center_utilites import (
@@ -69,7 +69,7 @@ def place_center_at_locator_for_instance_source(source_item: modo.Mesh, target_i
 
     updated_items = []
 
-    item_copy = duplicate_item(source_item)
+    item_copy = duplicate_item_and_hierarchy(source_item)
     if not isinstance(item_copy, modo.Mesh):
         raise TypeError('Failed to duplicate source mesh.')
 

@@ -283,3 +283,11 @@ def is_name_similar(name: str, template: str, regex_pattern=REGEX_PATTERN) -> bo
         return True
 
     return False
+
+
+def reparent_children(source: modo.Item, target: modo.Item):
+    if not source or not target:
+        raise TypeError('Source or target item is None.')
+
+    for child in source.children():
+        parent_items_to([child,], target, get_parent_index(child))
