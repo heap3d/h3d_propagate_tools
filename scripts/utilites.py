@@ -60,30 +60,35 @@ def match_scl(item: modo.Item, itemTo: modo.Item):
 
 
 def get_instances(item: modo.Item) -> list[modo.Item]:
+    """ Gets list of instances for provided item
+
+    Args:
+        item (modo.Item): _description_Item to get instances for.
+
+    Raises:
+        ValueError: Error getting instances.
+
+    Returns:
+        list[modo.Item]: List of item instances.
+    """
     instances = item.itemGraph('source').reverse()
     if not isinstance(instances, list):
         raise ValueError(f'Error getting instances for the <{item.name}> item')
     return instances
 
 
-def make_instance(item: modo.Item) -> modo.Item:
-    item.select(replace=True)
-    lx.eval('item.duplicate instance:true all:true')
-    newitem = modo.Scene().selected[0]
-    return newitem
-
-
-def duplicate_item_and_hierarchy(item: modo.Item) -> modo.Item:
-    item.select(replace=True)
-    lx.eval('item.duplicate instance:false all:true')
-    newitem = modo.Scene().selected[0]
-    return newitem
-
-
 def duplicate_item(item: modo.Item) -> modo.Item:
-    if not item:
-        raise TypeError('No item provided.')
+    """ Duplicates item without hierarchy.
 
+    Args:
+        item (modo.Item): item to duplicate.
+
+    Raises:
+        TypeError: Item duplication error.
+
+    Returns:
+        modo.Item: Item copy without hierarchy.
+    """
     copy = modo.Scene().duplicateItem(item)
     if not copy:
         raise TypeError('Item duplication error.')
@@ -91,8 +96,57 @@ def duplicate_item(item: modo.Item) -> modo.Item:
     return copy
 
 
+def duplicate_item_with_hierarchy(item: modo.Item) -> modo.Item:
+    """ Makes item copy including its hierarchy.
+
+    Args:
+        item (modo.Item): Item to duplicate.
+
+    Returns:
+        modo.Item: Item copy including its hierarchy.
+    """
+    item.select(replace=True)
+    lx.eval('item.duplicate instance:false all:true')
+    newitem = modo.Scene().selected[0]
+    return newitem
+
+
+def make_instance(item: modo.Item) -> modo.Item:
+    """ Instantiates item without hierarchy.
+
+    Args:
+        item (modo.Item): Item to instantiate.
+
+    Raises:
+        TypeError: Item duplication error.
+
+    Returns:
+        modo.Item: Item instance without hierarchy.
+    """
+    copy = modo.Scene().duplicateItem(item, instance=True)
+    if not copy:
+        raise TypeError('Item duplication error.')
+
+    return copy
+
+
+def make_instance_with_hierarchy(item: modo.Item) -> modo.Item:
+    """ Makes item instance including its hierarchy.
+
+    Args:
+        item (modo.Item): Item to instantiate.
+
+    Returns:
+        modo.Item: Item instance including its hierarchy.
+    """
+    item.select(replace=True)
+    lx.eval('item.duplicate instance:true all:true')
+    newitem = modo.Scene().selected[0]
+    return newitem
+
+
 def get_user_value(name: str) -> Any:
-    """gets user value by name
+    """ Gets user value by name
 
     Args:
         name (str): user value name

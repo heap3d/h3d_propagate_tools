@@ -15,21 +15,21 @@ import modo.constants as c
 
 from h3d_propagate_tools.scripts.utilites import (
     itype_str,
-    duplicate_item_and_hierarchy,
+    duplicate_item_with_hierarchy,
 )
 
 from h3d_propagate_tools.scripts.center_utilites import (
     update_instance,
     place_center_at_locator,
     get_instances,
+    numparents,
+    select_if_exists,
 )
 
 
 def main():
     selected = modo.Scene().selectedByType(itype=c.LOCATOR_TYPE, superType=True)
-    if not selected:
-        return
-
+    selected.sort(key=numparents, reverse=True)
     if len(selected) < 2:
         return
 
@@ -41,9 +41,7 @@ def main():
 
     updated_items = align_center_to_item(source_items, target_item)
 
-    modo.Scene().deselect()
-    for item in updated_items:
-        item.select()
+    select_if_exists(updated_items)
 
 
 def align_center_to_item(source_items: Iterable[modo.Mesh], target_item: modo.Item) -> list[modo.Item]:
@@ -69,7 +67,7 @@ def place_center_at_locator_for_instance_source(source_item: modo.Mesh, target_i
 
     updated_items = []
 
-    item_copy = duplicate_item_and_hierarchy(source_item)
+    item_copy = duplicate_item_with_hierarchy(source_item)
     if not isinstance(item_copy, modo.Mesh):
         raise TypeError('Failed to duplicate source mesh.')
 

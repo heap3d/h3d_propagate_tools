@@ -9,6 +9,7 @@
 # ================================
 
 import re
+from typing import Optional, Iterable
 
 import modo
 import modo.constants as c
@@ -22,8 +23,11 @@ from h3d_propagate_tools.scripts.utilites import (
     get_parent_index,
     get_instances,
     parent_items_to,
-    make_instance,
+    duplicate_item_with_hierarchy,
+    make_instance_with_hierarchy,
     match_pos_rot,
+    match_pos,
+    match_rot,
     match_scl,
     itype_str,
 )
@@ -55,7 +59,7 @@ def get_selected_components(mesh: modo.Mesh, select_type: str) -> list:
     return []
 
 
-def select_components(mesh: modo.Mesh, components: list, select_type: str):
+def select_components(mesh: modo.Mesh, select_type: str, components: list):
     if not mesh or not isinstance(mesh, modo.Mesh):
         raise TypeError('Invalid mesh provided.')
 
@@ -79,7 +83,7 @@ def select_components(mesh: modo.Mesh, components: list, select_type: str):
             mesh.geometry.polygons.select(polygons=components)
 
 
-def create_loc_at_selection(mesh: modo.Mesh, select_type: str, orient: bool) -> modo.Item:
+def create_loc_at_selection(mesh: modo.Mesh, select_type: str, name: Optional[str] = None) -> modo.Item:
     if not mesh:
         raise TypeError('No mesh provided.')
 
@@ -96,12 +100,11 @@ def create_loc_at_selection(mesh: modo.Mesh, select_type: str, orient: bool) -> 
     drop_components_selection()
 
     lx.eval(f'select.type {ITEM}')
-    locator = modo.Scene().addItem(itype=c.LOCATOR_TYPE)
+    locator = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=name)
 
     locator.select(replace=True)
     lx.eval('item.matchWorkplane pos')
-    if orient:
-        lx.eval('item.matchWorkplane rot')
+    lx.eval('item.matchWorkplane rot')
 
     lx.eval('workPlane.reset')
 
@@ -159,7 +162,7 @@ def update_instance(newmesh: modo.Mesh, oldmesh: modo.Mesh) -> list[modo.Mesh]:
 
     tmp_loc = modo.Scene().addItem(itype='locator')
     for target in targets:
-        instance_item = make_instance(newmesh)
+        instance_item = make_instance_with_hierarchy(newmesh)
         if instance_item.type != itype_str(c.MESHINST_TYPE):
             raise TypeError('Failed to create mesh instance item.')
 
@@ -291,3 +294,92 @@ def reparent_children(source: modo.Item, target: modo.Item):
 
     for child in source.children():
         parent_items_to([child,], target, get_parent_index(child))
+
+
+def update_center(
+        mesh: modo.Mesh,
+        select_type: str,
+        components: list,
+        align_pos: bool = True,
+        align_rot: bool = True
+        ) -> modo.Mesh:
+    if not mesh or not isinstance(mesh, modo.Mesh):
+        raise TypeError('Invalid mesh provided.')
+
+    if not mesh.geometry.numVertices:
+        return mesh
+
+    original_parent = mesh.parent
+    original_parent_index = get_parent_index(mesh)
+    select_components(mesh, select_type, components)
+
+    # store mesh original transforms
+    original_loc: modo.Item = modo.Scene().addItem(itype=c.LOCATOR_TYPE)
+    if not original_loc:
+        raise RuntimeError('Failed to create original transforms locator.')
+    parent_items_to((original_loc,), mesh, inplace=False)
+    parent_items_to((original_loc,), None, inplace=True)
+
+    # reset mesh transforms
+    parent_items_to((mesh,), None, inplace=True)
+    mesh.select(replace=True)
+    lx.eval('transform.reset all')
+
+    # store mesh selection transforms
+    selection_loc = create_loc_at_selection(mesh, select_type, name='tmp center')
+    parent_items_to((selection_loc,), mesh, inplace=True)
+
+    # restore mesh original transforms with stored new center transforms
+    parent_items_to((mesh,), original_loc, inplace=False)
+
+    # restore mesh parenting
+    parent_items_to((mesh,), original_parent, index=original_parent_index, inplace=True)
+
+    modo.Scene().removeItems(original_loc)
+
+    # unparent selection locator to not duplicate with mesh
+    parent_items_to((selection_loc,), None, inplace=True)
+
+    # create new center locator
+    new_center_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE)
+    if not new_center_loc:
+        raise RuntimeError('Failed to create new center locator.')
+    parent_items_to((new_center_loc,), mesh, inplace=False)
+    parent_items_to((new_center_loc,), None, inplace=True)
+
+    if align_pos:
+        match_pos(new_center_loc, selection_loc)
+    if align_rot:
+        match_rot(new_center_loc, selection_loc)
+
+    # duplicate mesh with hierarchy to propagate
+    new_mesh = duplicate_item_with_hierarchy(mesh)
+    if not isinstance(new_mesh, modo.Mesh):
+        raise TypeError('Failed to duplicate mesh.')
+
+    place_center_at_locator(new_mesh, new_center_loc)
+
+    modo.Scene().removeItems(selection_loc)
+    modo.Scene().removeItems(new_center_loc)
+
+    update_instance(new_mesh, mesh)
+
+    return new_mesh
+
+
+def numparents(item: modo.Item) -> int:
+    if not item.parents:
+        return 0
+    return len(item.parents)
+
+
+def select_if_exists(items: Iterable[modo.Item]):
+    if not items:
+        return
+
+    modo.Scene().deselect()
+    for item in items:
+        try:
+            item.select()
+        except LookupError:
+            pass

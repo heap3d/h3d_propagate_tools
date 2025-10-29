@@ -13,22 +13,23 @@ import modo.constants as c
 
 from h3d_propagate_tools.scripts.utilites import (
     get_select_type,
-    duplicate_item,
 )
 
 from h3d_propagate_tools.scripts.center_utilites import (
     get_selected_components,
-    select_components,
-    place_center_at_locator,
-    update_instance,
-    create_loc_at_selection,
+    update_center,
+    numparents,
+    select_if_exists,
 )
 
 
 def main():
-    selected_meshes = modo.Scene().selectedByType(itype=c.MESH_TYPE)
-    select_type = get_select_type()
+    selected_meshes: list[modo.Mesh] = modo.Scene().selectedByType(itype=c.MESH_TYPE)
+    selected_meshes.sort(key=numparents, reverse=True)
+    if not selected_meshes:
+        return
 
+    select_type = get_select_type()
     selected_components: dict[modo.Mesh, list] = dict()
     for mesh in selected_meshes:
         selected_components[mesh] = get_selected_components(mesh, select_type)
@@ -38,25 +39,14 @@ def main():
         if not mesh.geometry.numVertices:
             continue
 
-        select_components(mesh, selected_components[mesh], select_type)
+        if not mesh.geometry.numVertices:
+            return mesh
 
-        locator = create_loc_at_selection(mesh, select_type, orient=True)
-
-        new_mesh = duplicate_item(mesh)
-        if not isinstance(new_mesh, modo.Mesh):
-            raise TypeError('Failed to duplicate mesh.')
-
-        place_center_at_locator(new_mesh, locator)
-        modo.Scene().removeItems(locator)
-
-        update_instance(new_mesh, mesh)
+        new_mesh = update_center(mesh, select_type, selected_components[mesh])
 
         new_meshes.append(new_mesh)
 
-    if new_meshes:
-        modo.Scene().deselect()
-        for mesh in new_meshes:
-            mesh.select()
+    select_if_exists(new_meshes)
 
 
 if __name__ == '__main__':
