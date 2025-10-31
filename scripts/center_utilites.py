@@ -381,5 +381,5 @@ def select_if_exists(items: Iterable[modo.Item]):
     for item in items:
         try:
             item.select()
-        except LookupError:
+        except (LookupError, AttributeError):
             pass
