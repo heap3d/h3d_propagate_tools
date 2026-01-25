@@ -5,7 +5,7 @@
 # --------------------------------
 # modo python
 # Leonard
-# align mesh center position and rotation to last selected item
+# set mesh center rotation to last selected item
 # ================================
 
 from typing import Iterable

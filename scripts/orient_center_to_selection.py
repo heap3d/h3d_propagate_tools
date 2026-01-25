@@ -5,7 +5,7 @@
 # --------------------------------
 # modo python
 # Leonard
-# move item center position by component selection
+# orient item center position by component selection
 # ================================
 
 import modo

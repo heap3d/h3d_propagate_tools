@@ -1,11 +1,11 @@
 #!/usr/bin/python
 # ================================
-# (C)2025-2026 Dmytro Holub
+# (C)2026 Dmytro Holub
 # heap3d@gmail.com
 # --------------------------------
 # modo python
 # Leonard
-# align mesh center position and rotation to last selected item
+# set mesh center position to last selected item
 # ================================
 
 from typing import Iterable
