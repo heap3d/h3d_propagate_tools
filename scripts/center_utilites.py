@@ -32,6 +32,8 @@ from h3d_propagate_tools.scripts.utilites import (
     itype_str,
 )
 
+# from h3d_utilites.scripts.h3d_debug import prints
+
 
 COLOR_PROCESSED = 'orange'
 USERVAL_IGNORE_HIDDEN = 'h3d_propagate_ignore_hidden'
@@ -133,6 +135,10 @@ def place_center_at_locator(mesh: modo.Mesh, locator: modo.Item) -> modo.Mesh:
     if not locator:
         raise TypeError('No locator provided.')
 
+    # prints(f'Placing center of mesh "{mesh.name}" at locator "{locator.name}"...')
+    # prints(mesh)
+    # prints(locator)
+
     parent = mesh.parent
     hierarchy_index = mesh.parentIndex if parent else mesh.rootIndex
     mesh.select(replace=True)
@@ -141,16 +147,21 @@ def place_center_at_locator(mesh: modo.Mesh, locator: modo.Item) -> modo.Mesh:
     mesh.select(replace=True)
     locator.select()
     lx.eval('item.parent inPlace:1')
+    # prints(f'Mesh "{mesh.name}" parented to locator "{locator.name}".')
 
     mesh.select(replace=True)
     lx.eval('transform.freeze')
+    # prints(f'Mesh "{mesh.name}" transforms frozen.')
 
     lx.eval(f'item.parent parent:{{}} inPlace:1 position:{hierarchy_index}')
+    # prints(f'Mesh "{mesh.name}" unparented.')
 
     if parent is not None:
         parent.select()
         lx.eval(f'item.parent inPlace:1 position:{hierarchy_index}')
+        # prints(f'Mesh "{mesh.name}" reparented to original parent "{parent.name}".')
 
+    # prints(f'Center placement for mesh "{mesh.name}" completed.')
     return mesh
 
 

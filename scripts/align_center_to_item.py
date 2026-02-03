@@ -26,10 +26,14 @@ from h3d_propagate_tools.scripts.center_utilites import (
     select_if_exists,
 )
 
+# from h3d_utilites.scripts.h3d_debug import h3dd, prints
+
 
 def main():
+    # prints('Align Center to Item script started.')
     selected = modo.Scene().selectedByType(itype=c.LOCATOR_TYPE, superType=True)
     if len(selected) < 2:
+        print('Select at least one mesh and one target locator.')
         return
 
     target_item = selected[-1]
@@ -37,6 +41,7 @@ def main():
     source_items.sort(key=numparents, reverse=True)
 
     if not source_items:
+        # prints('No source mesh items selected.')
         return
 
     updated_items = align_center_to_item(source_items, target_item)
@@ -45,16 +50,23 @@ def main():
 
 
 def align_center_to_item(source_items: Iterable[modo.Mesh], target_item: modo.Item) -> list[modo.Item]:
+    # prints('Aligning center of source items to target item...')
+    # prints(source_items)
+    # prints(target_item)
+
     updated_items = []
     for source_item in source_items:
         instances = get_instances(source_item)
         if not instances:
+            # prints(f'Item "{source_item.name}" has no instances. Aligning directly.')
             item = place_center_at_locator(source_item, target_item)
             updated_items.append(item)
         else:
+            # prints(f'Item "{source_item.name}" has {len(instances)} instance(s). Aligning instances.')
             items = place_center_at_locator_for_instance_source(source_item, target_item)
             updated_items.extend(items)
 
+    # prints('Alignment completed.')
     return updated_items
 
 
@@ -78,4 +90,5 @@ def place_center_at_locator_for_instance_source(source_item: modo.Mesh, target_i
 
 
 if __name__ == '__main__':
+    # h3dd.enable_debug_output(False)
     main()
