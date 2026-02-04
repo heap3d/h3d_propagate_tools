@@ -12,6 +12,7 @@ from typing import Iterable
 
 import modo
 import modo.constants as c
+import lx
 
 from h3d_propagate_tools.scripts.utilites import (
     itype_str,
@@ -39,21 +40,31 @@ def main():
     if not source_items:
         return
 
-    updated_items = align_center_to_item(source_items, target_item)
+    updated_items = orient_center_to_item(source_items, target_item)
 
     select_if_exists(updated_items)
 
 
-def align_center_to_item(source_items: Iterable[modo.Mesh], target_item: modo.Item) -> list[modo.Item]:
+def orient_center_to_item(source_items: Iterable[modo.Mesh], target_item: modo.Item) -> list[modo.Item]:
     updated_items = []
     for source_item in source_items:
+        new_center_loc = modo.Scene().addItem(c.LOCATOR_TYPE, name='source_item_loc')
+        lx.eval(f'item.parent item:{{{new_center_loc.id}}} parent:{{{source_item.id}}}')
+        lx.eval(f'item.parent item:{{{new_center_loc.id}}} parent:{{}} inPlace:1')
+
+        new_center_loc.select(replace=True)
+        target_item.select()
+        lx.eval('item.match item rot')
+
         instances = get_instances(source_item)
         if not instances:
-            item = place_center_at_locator(source_item, target_item)
+            item = place_center_at_locator(source_item, new_center_loc)
             updated_items.append(item)
         else:
-            items = place_center_at_locator_for_instance_source(source_item, target_item)
+            items = place_center_at_locator_for_instance_source(source_item, new_center_loc)
             updated_items.extend(items)
+
+        modo.Scene().removeItems(new_center_loc)
 
     return updated_items
 
