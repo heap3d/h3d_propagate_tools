@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # ================================
-# (C)2025 Dmytro Holub
+# (C)2025-2026 Dmytro Holub
 # heap3d@gmail.com
 # --------------------------------
 # modo python
@@ -17,7 +17,10 @@ import modo.constants as c
 from h3d_propagate_tools.scripts.propagate_item import DIALOG_TITLE, ERRMSG_SELECTMORE, make_aligned_instances
 from h3d_propagate_tools.scripts.utilites import parent_items_to, get_parent_index
 
+from h3d_utilites.scripts.h3d_utils import execution_time_alarm
 
+
+@execution_time_alarm('Propagate Item then Group')
 def main():
     selected = modo.Scene().selectedByType(itype=c.LOCATOR_TYPE, superType=True)
     if len(selected) < 2:

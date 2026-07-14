@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # ================================
-# (C)2025 Dmytro Holub
+# (C)2025-2026 Dmytro Holub
 # heap3d@gmail.com
 # --------------------------------
 # modo python
@@ -22,7 +22,10 @@ from h3d_propagate_tools.scripts.center_utilites import (
     select_if_exists,
 )
 
+from h3d_utilites.scripts.h3d_utils import execution_time_alarm
 
+
+@execution_time_alarm('Set Item Center > Rotation To Selection')
 def main():
     selected_meshes: list[modo.Mesh] = modo.Scene().selectedByType(itype=c.MESH_TYPE)
     selected_meshes.sort(key=numparents, reverse=True)

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # ================================
-# (C)2025 Dmytro Holub
+# (C)2025-2026 Dmytro Holub
 # heap3d@gmail.com
 # --------------------------------
 # modo python
@@ -19,11 +19,14 @@ from h3d_propagate_tools.scripts.utilites import (
     get_parent_index,
 )
 
+from h3d_utilites.scripts.h3d_utils import execution_time_alarm
+
 
 DIALOG_TITLE = 'Propagate Item'
 ERRMSG_SELECTMORE = 'Please select two or more items to run the command.'
 
 
+@execution_time_alarm('Propagate Item')
 def main():
     selected = modo.Scene().selectedByType(itype=c.LOCATOR_TYPE, superType=True)
     if len(selected) < 2:

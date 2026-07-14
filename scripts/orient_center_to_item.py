@@ -27,7 +27,10 @@ from h3d_propagate_tools.scripts.center_utilites import (
     select_if_exists,
 )
 
+from h3d_utilites.scripts.h3d_utils import execution_time_alarm
 
+
+@execution_time_alarm('Set Item Center > Rotation To Item')
 def main():
     selected = modo.Scene().selectedByType(itype=c.LOCATOR_TYPE, superType=True)
     if len(selected) < 2:

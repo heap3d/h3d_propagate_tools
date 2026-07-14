@@ -26,9 +26,12 @@ from h3d_propagate_tools.scripts.center_utilites import (
     select_if_exists,
 )
 
+from h3d_utilites.scripts.h3d_utils import execution_time_alarm
+
 # from h3d_utilites.scripts.h3d_debug import h3dd, prints
 
 
+@execution_time_alarm('Set Item Center > Aligned To Item')
 def main():
     # prints('Align Center to Item script started.')
     selected = modo.Scene().selectedByType(itype=c.LOCATOR_TYPE, superType=True)

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # ================================
-# (C)2025 Dmytro Holub
+# (C)2025-2026 Dmytro Holub
 # heap3d@gmail.com
 # --------------------------------
 # modo python
@@ -12,6 +12,8 @@ import modo.constants as c
 
 from h3d_propagate_tools.scripts.utilites import make_instance, parent_items_to
 
+from h3d_utilites.scripts.h3d_utils import execution_time_alarm
+
 
 DIALOG_TITLE = 'Propagate Children'
 ERRMSG_SELECT_MORE = 'Please select two or more items to run the command'
@@ -19,6 +21,7 @@ ERRMSG_SELECT_LAST_CHILDREN = 'The last selected item should contain children it
     'Please select an item with children to run the command.'
 
 
+@execution_time_alarm('Propagate Children')
 def main():
     selected = modo.Scene().selectedByType(itype=c.LOCATOR_TYPE, superType=True)
     if len(selected) < 2:

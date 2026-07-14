@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # ================================
-# (C)2025 Dmytro Holub
+# (C)2025-2026 Dmytro Holub
 # heap3d@gmail.com
 # --------------------------------
 # modo python
@@ -20,6 +20,8 @@ from h3d_propagate_tools.scripts.utilites import (
 
 from h3d_propagate_tools.scripts.center_utilites import get_instance_source
 
+from h3d_utilites.scripts.h3d_utils import execution_time_alarm
+
 
 TMP_SUFFIX = '_tmp'
 
@@ -27,6 +29,7 @@ DIALOG_TITLE = 'Replace Items with Instance'
 ERRMSG_SELECTMORE = 'Please select two or more items to run the command.'
 
 
+@execution_time_alarm('Replace Items with Instance')
 def main():
     scene = modo.Scene()
     selected = scene.selectedByType(c.LOCATOR_TYPE, superType=True)
@@ -42,7 +45,7 @@ def main():
     for target in targets:
         new_items.append(replace_with_instance(source_item=source, target_item=target))
 
-    for item in target_candidates:
+    for item in targets:
         try:
             modo.Scene().removeItems(item, children=True)
         except LookupError:
