@@ -5,6 +5,7 @@
 		<source target="h3d_propagate_tools/scripts/center_utilites.py">scripts/center_utilites.py</source>
 		<source target="h3d_propagate_tools/scripts/orient_center_to_item.py">scripts/orient_center_to_item.py</source>
 		<source target="h3d_propagate_tools/scripts/orient_center_to_selection.py">scripts/orient_center_to_selection.py</source>
+		<source target="h3d_propagate_tools/scripts/orient_z_to_normal.py">scripts/orient_z_to_normal.py</source>
 		<source target="h3d_propagate_tools/scripts/propagate_children.py">scripts/propagate_children.py</source>
 		<source target="h3d_propagate_tools/scripts/propagate_item_then_group.py">scripts/propagate_item_then_group.py</source>
 		<source target="h3d_propagate_tools/scripts/propagate_item.py">scripts/propagate_item.py</source>
@@ -17,7 +18,6 @@
 		<source target="h3d_propagate_tools/scripts/set_center_pos_to_item.py">scripts/set_center_pos_to_item.py</source>
 		<source target="h3d_propagate_tools/scripts/set_center_pos_to_selection.py">scripts/set_center_pos_to_selection.py</source>
 		<source target="h3d_propagate_tools/scripts/update_instances.py">scripts/update_instances.py</source>
-		<source target="h3d_propagate_tools/scripts/utilites.py">scripts/utilites.py</source>
 		<source target="h3d_propagate_tools/index.cfg">index.cfg</source>
 	</kit>
 	<message button="Help">h3d_propagate_tools Kit installation complete.</message>

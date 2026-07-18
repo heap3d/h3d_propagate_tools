@@ -9,7 +9,7 @@
 
 import modo
 
-from h3d_propagate_tools.scripts.utilites import get_instances
+from h3d_utilites.scripts.h3d_utils import get_instances
 
 
 def main():

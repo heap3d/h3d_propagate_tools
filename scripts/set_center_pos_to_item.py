@@ -14,20 +14,19 @@ import modo
 import modo.constants as c
 import lx
 
-from h3d_propagate_tools.scripts.utilites import (
+from h3d_utilites.scripts.h3d_utils import (
+    execution_time_alarm,
     itype_str,
     duplicate_item_with_hierarchy,
+    select_if_exists,
+    get_instances,
 )
 
 from h3d_propagate_tools.scripts.center_utilites import (
     update_instance,
     place_center_at_locator,
-    get_instances,
     numparents,
-    select_if_exists,
 )
-
-from h3d_utilites.scripts.h3d_utils import execution_time_alarm
 
 
 @execution_time_alarm('Set Item Center > Position To Item')

@@ -11,17 +11,14 @@ import modo
 import modo.constants as c
 import lx
 
-from h3d_propagate_tools.scripts.utilites import (
+from h3d_utilites.scripts.h3d_utils import (
+    execution_time_alarm,
     match_pos_rot,
     match_scl,
     parent_items_to,
     get_parent_index,
+    get_source_of_instance,
 )
-
-from h3d_propagate_tools.scripts.center_utilites import get_instance_source
-
-from h3d_utilites.scripts.h3d_utils import execution_time_alarm
-
 
 TMP_SUFFIX = '_tmp'
 
@@ -63,7 +60,7 @@ def replace_with_instance(source_item: modo.Item, target_item: modo.Item) -> mod
     if not target_item:
         raise ValueError('Target item error: value is None')
     instance_item = modo.Scene().duplicateItem(
-        item=get_instance_source(source_item), instance=True
+        item=get_source_of_instance(source_item), instance=True
     )
     if not instance_item:
         raise ValueError('Failed to duplicate source_item')

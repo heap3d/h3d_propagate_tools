@@ -9,7 +9,7 @@
 
 import modo
 
-from h3d_propagate_tools.scripts.center_utilites import get_instance_source
+from h3d_utilites.scripts.h3d_utils import get_source_of_instance
 
 
 def main():
@@ -17,7 +17,7 @@ def main():
 
     source_items: list[modo.Item] = []
     for item in selected:
-        source = get_instance_source(item)
+        source = get_source_of_instance(item)
         if source:
             source_items.append(source)
 

@@ -9,17 +9,14 @@
 # ================================
 
 import re
-from typing import Optional, Iterable
+from typing import Optional
 
 import modo
 import modo.constants as c
 import lx
 
-from h3d_propagate_tools.scripts.utilites import (
-    ITEM,
-    VERTEX,
-    EDGE,
-    POLYGON,
+from h3d_utilites.scripts.h3d_utils import (
+    SELECTION_MODE,
     get_parent_index,
     get_instances,
     parent_items_to,
@@ -30,9 +27,8 @@ from h3d_propagate_tools.scripts.utilites import (
     match_rot,
     match_scl,
     itype_str,
+    remove_if_exist,
 )
-
-# from h3d_utilites.scripts.h3d_debug import prints
 
 
 COLOR_PROCESSED = 'orange'
@@ -40,21 +36,26 @@ USERVAL_IGNORE_HIDDEN = 'h3d_propagate_ignore_hidden'
 USERVAL_REGEX_PATTERN = 'h3d_propagate_regex'
 REGEX_PATTERN = r'^(.*?)[._ (d)]*[ ().\d]*\d*\)?$'
 
+VERTEX = SELECTION_MODE.VERTEX.value
+EDGE = SELECTION_MODE.EDGE.value
+POLYGON = SELECTION_MODE.POLYGON.value
+ITEM = SELECTION_MODE.ITEM.value
 
-def get_selected_components(mesh: modo.Mesh, select_type: str) -> list:
+
+def get_selected_components(mesh: modo.Mesh, selection_mode: str) -> list:
     if not mesh or not isinstance(mesh, modo.Mesh):
         raise TypeError('Invalid mesh provided.')
 
     if not mesh.geometry:
         raise ValueError('Mesh has no geometry.')
 
-    if select_type == VERTEX:
+    if selection_mode == VERTEX:
         if vertices := mesh.geometry.vertices:
             return vertices.selected
-    elif select_type == EDGE:
+    elif selection_mode == EDGE:
         if edges := mesh.geometry.edges:
             return edges.selected
-    elif select_type == POLYGON:
+    elif selection_mode == POLYGON:
         if polygons := mesh.geometry.polygons:
             return polygons.selected
 
@@ -135,10 +136,6 @@ def place_center_at_locator(mesh: modo.Mesh, locator: modo.Item) -> modo.Mesh:
     if not locator:
         raise TypeError('No locator provided.')
 
-    # prints(f'Placing center of mesh "{mesh.name}" at locator "{locator.name}"...')
-    # prints(mesh)
-    # prints(locator)
-
     parent = mesh.parent
     hierarchy_index = mesh.parentIndex if parent else mesh.rootIndex
     mesh.select(replace=True)
@@ -147,37 +144,32 @@ def place_center_at_locator(mesh: modo.Mesh, locator: modo.Item) -> modo.Mesh:
     mesh.select(replace=True)
     locator.select()
     lx.eval('item.parent inPlace:1')
-    # prints(f'Mesh "{mesh.name}" parented to locator "{locator.name}".')
 
     mesh.select(replace=True)
     lx.eval('transform.freeze')
-    # prints(f'Mesh "{mesh.name}" transforms frozen.')
 
     lx.eval(f'item.parent parent:{{}} inPlace:1 position:{hierarchy_index}')
-    # prints(f'Mesh "{mesh.name}" unparented.')
 
     if parent is not None:
         parent.select()
         lx.eval(f'item.parent inPlace:1 position:{hierarchy_index}')
-        # prints(f'Mesh "{mesh.name}" reparented to original parent "{parent.name}".')
 
-    # prints(f'Center placement for mesh "{mesh.name}" completed.')
     return mesh
 
 
-def update_instance(newmesh: modo.Mesh, oldmesh: modo.Mesh) -> list[modo.Mesh]:
+def update_instance(new_mesh: modo.Mesh, old_mesh: modo.Mesh) -> list[modo.Item]:
     updated_instances = []
-    targets = get_instances(oldmesh)
+    targets = get_instances(old_mesh)
 
-    parent_items_to([newmesh,], oldmesh.parent, get_parent_index(oldmesh))
+    parent_items_to([new_mesh,], old_mesh.parent, get_parent_index(old_mesh))
 
     tmp_loc = modo.Scene().addItem(itype='locator')
     for target in targets:
-        instance_item = make_instance_with_hierarchy(newmesh)
+        instance_item = make_instance_with_hierarchy(new_mesh)
         if instance_item.type != itype_str(c.MESHINST_TYPE):
             raise TypeError('Failed to create mesh instance item.')
 
-        match_pos_rot(tmp_loc, oldmesh)
+        match_pos_rot(tmp_loc, old_mesh)
         parent_items_to([instance_item,], tmp_loc)
 
         match_pos_rot(tmp_loc, target)
@@ -186,22 +178,10 @@ def update_instance(newmesh: modo.Mesh, oldmesh: modo.Mesh) -> list[modo.Mesh]:
 
         updated_instances.append(instance_item)
 
-    modo.Scene().removeItems(tmp_loc)
-    modo.Scene().removeItems(oldmesh, children=True)
+    remove_if_exist(tmp_loc, True)
+    remove_if_exist(old_mesh, True)
 
     return updated_instances
-
-
-def get_instance_source(instance: modo.Item) -> modo.Item:
-    if instance is None:
-        raise ValueError('instance item error: value is None')
-    if not instance.isAnInstance:
-        return instance
-
-    try:
-        return instance.itemGraph('source').forward()[0]  # type:ignore
-    except IndexError:
-        raise ValueError('Failed to get source of instance from item graph "source"')
 
 
 def get_selected(visible: bool) -> list[modo.Item]:
@@ -383,14 +363,29 @@ def numparents(item: modo.Item) -> int:
         return 0
     return len(item.parents)
 
+def align_center_to_item(mesh: modo.Mesh, center: modo.Item) -> modo.Mesh:
+    instances = get_instances(mesh)
 
-def select_if_exists(items: Iterable[modo.Item]):
-    if not items:
-        return
+    if not instances:
+        updated_mesh = place_center_at_locator(mesh, center)
+    else:
+        updated_mesh, _ = place_center_at_locator_for_instance_source(mesh, center)
 
-    modo.Scene().deselect()
-    for item in items:
-        try:
-            item.select()
-        except (LookupError, AttributeError):
-            pass
+    return updated_mesh
+
+
+def place_center_at_locator_for_instance_source(mesh: modo.Mesh, center: modo.Item) -> tuple[modo.Mesh, list[modo.Item]]:
+    if not mesh:
+        raise TypeError('Mesh is not provided.')
+
+    if not center:
+        raise TypeError('Center item is not provided.')
+
+    item_copy = duplicate_item_with_hierarchy(mesh)
+    if not isinstance(item_copy, modo.Mesh):
+        raise TypeError('Failed to duplicate source mesh.')
+
+    updated_mesh = place_center_at_locator(item_copy, center)
+    updated_instances = update_instance(item_copy, mesh)
+
+    return (updated_mesh, updated_instances)
