@@ -10,9 +10,7 @@
 import modo
 import modo.constants as c
 
-from h3d_propagate_tools.scripts.center_utilites import (
-    update_instance,
-)
+from h3d_propagate_tools.scripts.center_utilites import update_instance
 
 from h3d_utilites.scripts.h3d_utils import execution_time_alarm
 

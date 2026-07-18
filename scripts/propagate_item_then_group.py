@@ -15,9 +15,12 @@ import modo.constants as c
 
 
 from h3d_propagate_tools.scripts.propagate_item import DIALOG_TITLE, ERRMSG_SELECTMORE, make_aligned_instances
-from h3d_propagate_tools.scripts.utilites import parent_items_to, get_parent_index
 
-from h3d_utilites.scripts.h3d_utils import execution_time_alarm
+from h3d_utilites.scripts.h3d_utils import (
+    execution_time_alarm,
+    parent_items_to,
+    get_parent_index,
+    )
 
 
 @execution_time_alarm('Propagate Item then Group')

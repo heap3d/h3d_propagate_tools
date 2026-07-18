@@ -11,7 +11,7 @@
 import modo
 
 
-from h3d_propagate_tools.scripts.utilites import (
+from h3d_utilites.scripts.h3d_utils import (
     get_user_value,
 )
 

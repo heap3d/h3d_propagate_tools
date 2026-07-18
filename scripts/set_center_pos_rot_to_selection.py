@@ -11,18 +11,17 @@
 import modo
 import modo.constants as c
 
-from h3d_propagate_tools.scripts.utilites import (
-    get_select_type,
+from h3d_utilites.scripts.h3d_utils import (
+    get_selection_mode,
+    select_if_exists,
+    execution_time_alarm,
 )
 
 from h3d_propagate_tools.scripts.center_utilites import (
     get_selected_components,
     update_center,
     numparents,
-    select_if_exists,
 )
-
-from h3d_utilites.scripts.h3d_utils import execution_time_alarm
 
 
 @execution_time_alarm('Set Item Center > Aligned To Selection')
@@ -32,7 +31,7 @@ def main():
     if not selected_meshes:
         return
 
-    select_type = get_select_type()
+    select_type = get_selection_mode()
     selected_components: dict[modo.Mesh, list] = dict()
     for mesh in selected_meshes:
         selected_components[mesh] = get_selected_components(mesh, select_type)
@@ -41,9 +40,6 @@ def main():
     for mesh in selected_meshes:
         if not mesh.geometry.numVertices:
             continue
-
-        if not mesh.geometry.numVertices:
-            return mesh
 
         new_mesh = update_center(mesh, select_type, selected_components[mesh])
 
