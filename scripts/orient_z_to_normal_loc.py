@@ -4,7 +4,7 @@
 # heap3d@gmail.com
 # --------------------------------
 # modo python
-# orient mesh center negative z-axis to selection normal
+# placxe locator at mesh center and orient z-axis to selection normal
 # ================================
 
 import modo
@@ -13,7 +13,7 @@ import modo.constants as c
 from h3d_propagate_tools.scripts.center_utilites import (
     get_selected_components,
     numparents,
-    orient_z_axis_to_normal,
+    place_orient_z_axis_to_normal_locator,
 )
 
 from h3d_utilites.scripts.h3d_utils import (
@@ -37,7 +37,7 @@ def main():
     for mesh in selected_meshes:
         selected_components[mesh] = get_selected_components(mesh, selection_mode)
 
-    updated_meshes: list[modo.Mesh] = []
+    result_locators: list[modo.Item] = []
     for mesh in selected_meshes:
         if not mesh.geometry.numVertices:
             continue
@@ -45,10 +45,10 @@ def main():
         set_selection_mode(selection_mode)
         select_components(selected_components[mesh])
 
-        updated_mesh = orient_z_axis_to_normal(mesh, selection_mode, flip=True)
-        updated_meshes.append(updated_mesh)
+        result_loc = place_orient_z_axis_to_normal_locator(mesh, selection_mode)
+        result_locators.append(result_loc)
 
-    select_if_exists(updated_meshes)
+    select_if_exists(result_locators)
 
 
 if __name__ == '__main__':

@@ -5,7 +5,7 @@
 		<source target="h3d_propagate_tools/scripts/center_utilites.py">scripts/center_utilites.py</source>
 		<source target="h3d_propagate_tools/scripts/orient_center_to_item.py">scripts/orient_center_to_item.py</source>
 		<source target="h3d_propagate_tools/scripts/orient_center_to_selection.py">scripts/orient_center_to_selection.py</source>
-		<source target="h3d_propagate_tools/scripts/orient_negative_z_to_normal.py">scripts/orient_negative_z_to_normal.py</source>
+		<source target="h3d_propagate_tools/scripts/orient_z_to_normal_loc.py">scripts/orient_z_to_normal_loc.py</source>
 		<source target="h3d_propagate_tools/scripts/orient_z_to_normal.py">scripts/orient_z_to_normal.py</source>
 		<source target="h3d_propagate_tools/scripts/propagate_children.py">scripts/propagate_children.py</source>
 		<source target="h3d_propagate_tools/scripts/propagate_item_then_group.py">scripts/propagate_item_then_group.py</source>
