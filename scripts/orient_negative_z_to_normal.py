@@ -4,7 +4,7 @@
 # heap3d@gmail.com
 # --------------------------------
 # modo python
-# orient mesh center z-axis to selection normal
+# orient mesh center negative z-axis to selection normal
 # ================================
 
 import modo
@@ -45,7 +45,7 @@ def main():
         set_selection_mode(selection_mode)
         select_components(selected_components[mesh])
 
-        updated_mesh = orient_z_axis_to_normal(mesh, selection_mode)
+        updated_mesh = orient_z_axis_to_normal(mesh, selection_mode, flip=True)
         updated_meshes.append(updated_mesh)
 
     select_if_exists(updated_meshes)

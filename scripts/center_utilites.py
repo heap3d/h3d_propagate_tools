@@ -389,3 +389,42 @@ def place_center_at_locator_for_instance_source(mesh: modo.Mesh, center: modo.It
     updated_instances = update_instance(item_copy, mesh)
 
     return (updated_mesh, updated_instances)
+
+
+def orient_z_axis_to_normal(mesh: modo.Mesh, selection_mode: str, flip=False) -> modo.Mesh:
+    SELECTION_LOC = 'selection loc'
+    NORMAL_DIRECTION_LOC = 'normal direction loc'
+    RESULT_LOC = 'result loc'
+
+    selection_loc = create_loc_at_selection(mesh, selection_mode, SELECTION_LOC)
+
+    normal_direction_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=NORMAL_DIRECTION_LOC)
+    parent_items_to((normal_direction_loc,), mesh, inplace=False)
+    normal_direction_loc.select(replace=True)
+    lx.eval('transform.channel pos.Y 0.1')
+    parent_items_to((normal_direction_loc,), None, inplace=True)
+
+    match_pos(selection_loc, mesh)
+
+    selection_loc.select(replace=True)
+    normal_direction_loc.select()
+    lx.eval('constraintDirection')
+
+    result_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=RESULT_LOC)
+    parent_items_to((result_loc,), selection_loc, inplace=False)
+    result_loc.select(replace=True)
+    if not flip:
+        lx.eval('transform.channel rot.X 90.0')
+    else:
+        lx.eval('transform.channel rot.X -90.0')
+        lx.eval('transform.channel rot.Z 180.0')
+
+    parent_items_to((result_loc,), None, inplace=True)
+
+    updated_mesh = align_center_to_item(mesh, result_loc)
+
+    remove_if_exist(normal_direction_loc, True)
+    remove_if_exist(selection_loc, True)
+    remove_if_exist(result_loc, True)
+
+    return updated_mesh
