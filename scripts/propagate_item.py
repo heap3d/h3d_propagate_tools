@@ -21,7 +21,6 @@ from h3d_utilites.scripts.h3d_utils import (
 )
 
 
-
 DIALOG_TITLE = 'Propagate Item'
 ERRMSG_SELECTMORE = 'Please select two or more items to run the command.'
 

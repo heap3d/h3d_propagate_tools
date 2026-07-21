@@ -12,7 +12,7 @@ import modo.constants as c
 
 from h3d_propagate_tools.scripts.center_utilites import update_instance
 
-from h3d_utilites.scripts.h3d_utils import execution_time_alarm
+from h3d_utilites.scripts.h3d_utils import execution_time_alarm, select_if_exists
 
 
 DIALOG_TITLE = 'Update Instances'
@@ -27,13 +27,11 @@ def main():
         modo.dialogs.alert(DIALOG_TITLE, ERRMSG_SELECT2MESHES)
         return
 
-    newmesh: modo.Item = selected[-2]
-    oldmesh: modo.Item = selected[-1]
+    newmesh: modo.Mesh = selected[-1]
+    oldmesh: modo.Mesh = selected[-2]
 
-    if not isinstance(newmesh, modo.Mesh) or not isinstance(oldmesh, modo.Mesh):
-        raise TypeError('Both selected items must be mesh items.')
-
-    update_instance(newmesh, oldmesh)
+    updated_items = update_instance(newmesh, oldmesh)
+    select_if_exists(updated_items)
 
 
 if __name__ == '__main__':

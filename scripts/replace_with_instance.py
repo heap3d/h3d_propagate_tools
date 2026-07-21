@@ -9,7 +9,6 @@
 
 import modo
 import modo.constants as c
-import lx
 
 from h3d_utilites.scripts.h3d_utils import (
     execution_time_alarm,
@@ -18,7 +17,13 @@ from h3d_utilites.scripts.h3d_utils import (
     parent_items_to,
     get_parent_index,
     get_source_of_instance,
+    get_instances,
+    remove_if_exist,
+    set_selection_mode,
+    SELECTION_MODE,
+    select_if_exists,
 )
+
 
 TMP_SUFFIX = '_tmp'
 
@@ -36,52 +41,58 @@ def main():
         return
     source = selected[-1]
     target_candidates = selected[:-1]
-    targets = tuple(filter(lambda i: i.type != 'groupLocator', target_candidates))
+
+    targets_no_groups: set[modo.Item] = set(filter(lambda i: i.type != 'groupLocator', target_candidates))
+    target_instances = {item: get_instances(item) for item in targets_no_groups}
+
+    instances: set[modo.Item] = set()
+    for item in target_instances:
+        instances.update(target_instances[item])
+
+    targets = targets_no_groups - instances
 
     new_items: list[modo.Item] = []
-    for target in targets:
-        new_items.append(replace_with_instance(source_item=source, target_item=target))
+    for item in instances:
+        new_items.append(duplicate_instance_and_align(source=source, target=item))
 
     for item in targets:
-        try:
-            modo.Scene().removeItems(item, children=True)
-        except LookupError:
-            print('removeItemsError')
+        new_items.append(duplicate_instance_and_align(source=source, target=item))
 
-    lx.eval('select.type item')
-    modo.Scene().deselect()
-    for item in new_items:
-        item.select()
+    for item in targets:
+        remove_if_exist(item, children=True)
+
+    set_selection_mode(SELECTION_MODE.ITEM.value)
+    select_if_exists(new_items)
 
 
-def replace_with_instance(source_item: modo.Item, target_item: modo.Item) -> modo.Item:
-    if not source_item:
+def duplicate_instance_and_align(source: modo.Item, target: modo.Item) -> modo.Item:
+    if not source:
         raise ValueError('Source item error: value is None')
-    if not target_item:
+    if not target:
         raise ValueError('Target item error: value is None')
-    instance_item = modo.Scene().duplicateItem(
-        item=get_source_of_instance(source_item), instance=True
-    )
-    if not instance_item:
+
+    instanced_item = modo.Scene().duplicateItem(item=get_source_of_instance(source), instance=True)
+    if not instanced_item:
         raise ValueError('Failed to duplicate source_item')
-    instance_name = target_item.name
-    target_item.name = instance_name + TMP_SUFFIX
-    instance_item.name = instance_name
-    instance_item.setParent()
-    match_pos_rot(instance_item, target_item)
-    match_scl(instance_item, target_item)
+    instance_name = target.name
+    target.name = instance_name + TMP_SUFFIX
+    instanced_item.name = instance_name
+    instanced_item.setParent()
+    match_pos_rot(instanced_item, target)
+    match_scl(instanced_item, target)
 
-    replace_item(remove_item=target_item, insert_item=instance_item)
+    align_items(source=target, target=instanced_item)
 
-    return instance_item
+    return instanced_item
 
 
-def replace_item(remove_item: modo.Item, insert_item: modo.Item):
-    parent = remove_item.parent
-    children = remove_item.children()
-    parent_index = get_parent_index(remove_item)
-    parent_items_to([insert_item,], parent, parent_index)
-    parent_items_to(children, insert_item)
+def align_items(source: modo.Item, target: modo.Item):
+    parent = source.parent
+    children = source.children()
+
+    parent_index = get_parent_index(source)
+    parent_items_to([target,], parent, parent_index)
+    parent_items_to(children, target)
 
 
 if __name__ == '__main__':
