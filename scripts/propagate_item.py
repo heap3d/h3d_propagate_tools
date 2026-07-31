@@ -18,6 +18,7 @@ from h3d_utilites.scripts.h3d_utils import (
     match_pos_rot,
     parent_items_to,
     get_parent_index,
+    select_if_exists,
 )
 
 
@@ -35,7 +36,12 @@ def main():
     source_item: modo.Item = selected[-1]
     targets: list[modo.Item] = selected[:-1]
 
-    make_aligned_instances(source_item, targets)
+    new_items = make_aligned_instances(source_item, targets)
+
+    if not new_items:
+        return
+    modo.Scene().deselect()
+    select_if_exists(new_items)
 
 
 def make_aligned_instances(source: modo.Item, targets: Iterable) -> tuple[modo.Item, ...]:
