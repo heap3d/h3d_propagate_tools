@@ -89,6 +89,10 @@ def create_loc_at_selection(mesh: modo.Mesh, select_type: str, name: Optional[st
     if not mesh:
         raise TypeError('No mesh provided.')
 
+    lx.eval('workPlane.reset')
+    ref_system_id = lx.eval('item.refSystem ?')
+    lx.eval('item.refSystem {}')
+
     mesh.select(replace=True)
     lx.eval(f'item.editorColor {COLOR_PROCESSED}')
 
@@ -109,6 +113,8 @@ def create_loc_at_selection(mesh: modo.Mesh, select_type: str, name: Optional[st
     lx.eval('item.matchWorkplane rot')
 
     lx.eval('workPlane.reset')
+    if ref_system_id:
+        lx.eval(f'item.refSystem {{{ref_system_id}}}')
 
     return locator
 
