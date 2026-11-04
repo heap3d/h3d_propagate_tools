@@ -29,7 +29,7 @@ from h3d_utilites.scripts.h3d_utils import (
 def main():
     selected = modo.Scene().selectedByType(itype=c.LOCATOR_TYPE, superType=True)
     if len(selected) < 2:
-        print('Select at least one mesh and one target locator.')
+        print('Select at least one mesh and one target item.')
         return
 
     target_item = selected[-1]

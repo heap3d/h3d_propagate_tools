@@ -33,6 +33,7 @@ from h3d_propagate_tools.scripts.center_utilites import (
 def main():
     selected = modo.Scene().selectedByType(itype=c.LOCATOR_TYPE, superType=True)
     if len(selected) < 2:
+        print('Select at least one mesh and one target item.')
         return
 
     target_item = selected[-1]

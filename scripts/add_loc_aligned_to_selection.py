@@ -30,6 +30,7 @@ def main():
     selected_meshes: list[modo.Mesh] = modo.Scene().selectedByType(itype=c.MESH_TYPE)
     selected_meshes.sort(key=numparents, reverse=True)
     if not selected_meshes:
+        modo.dialogs.alert('No mesh selected', 'Please select at least one mesh to create locators.')
         return
 
     select_type = get_selection_mode()
