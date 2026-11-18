@@ -30,6 +30,8 @@ from h3d_utilites.scripts.h3d_utils import (
     remove_if_exist,
 )
 
+from h3d_utilites.scripts.h3d_debug import h3dd
+
 COLOR_PROCESSED = 'orange'
 USERVAL_IGNORE_HIDDEN = 'h3d_propagate_ignore_hidden'
 USERVAL_REGEX_PATTERN = 'h3d_propagate_regex'
@@ -397,55 +399,47 @@ def place_center_at_locator_for_instance_source(mesh: modo.Mesh, center: modo.It
 
 
 def orient_z_axis_to_normal(mesh: modo.Mesh, selection_mode: str) -> modo.Mesh:
-    SELECTION_LOC = 'selection loc'
-    NORMAL_DIRECTION_LOC = 'normal direction loc'
-    RESULT_LOC = 'result loc'
-    CENTER_LOC = 'center loc'
-
-    selection_loc = create_loc_at_selection(mesh, selection_mode, SELECTION_LOC)
-    match_pos(selection_loc, mesh)
-
-    normal_direction_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=NORMAL_DIRECTION_LOC)
-    parent_items_to((normal_direction_loc,), selection_loc, inplace=False)
-    normal_direction_loc.select(replace=True)
-    lx.eval('transform.channel pos.Y 0.1')
-    parent_items_to((normal_direction_loc,), None, inplace=True)
-
-    center_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=CENTER_LOC)
-    parent_items_to((center_loc,), mesh, inplace=False)
-    parent_items_to((center_loc,), None, inplace=True)
-
-    center_loc.select(replace=True)
-    normal_direction_loc.select()
-    lx.eval('constraintDirection')
-    lx.eval('item.channel chanModify$up.X 0.0')
-    lx.eval('item.channel chanModify$up.Y 0.0')
-    lx.eval('item.channel chanModify$up.Z 1.0')
-
-    result_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=RESULT_LOC)
-    parent_items_to((result_loc,), center_loc, inplace=False)
-    result_loc.select(replace=True)
-
-    parent_items_to((result_loc,), None, inplace=True)
-
+    result_loc = create_oriented_z_axis_to_normal_locator(mesh, selection_mode)
     updated_mesh = align_center_to_item(mesh, result_loc)
 
-    remove_if_exist(normal_direction_loc, True)
-    remove_if_exist(selection_loc, True)
     remove_if_exist(result_loc, True)
-    remove_if_exist(center_loc, True)
 
     return updated_mesh
 
 
 def place_orient_z_axis_to_normal_locator(mesh: modo.Mesh, selection_mode: str) -> modo.Item:
+    RESULT_LOC_COLOR = 'red'
+
+    result_loc = create_oriented_z_axis_to_normal_locator(mesh, selection_mode)
+    result_loc.select(replace=True)
+    lx.eval(f'item.editorColor {RESULT_LOC_COLOR}')
+
+    return result_loc
+
+
+def create_oriented_z_axis_to_normal_locator(mesh: modo.Mesh, selection_mode: str) -> modo.Item:
     SELECTION_LOC = 'selection loc'
     NORMAL_DIRECTION_LOC = 'normal direction loc'
-    RESULT_LOC = 'aligned to normal loc'
-    RESULT_LOC_COLOR = 'red'
     CENTER_LOC = 'center loc'
+    RESULT_LOC = 'result loc'
+    ORIGINAL_LOC = 'original loc'
+    RESET_LOC = 'reset loc'
 
     selection_loc = create_loc_at_selection(mesh, selection_mode, SELECTION_LOC)
+
+
+    mesh_parent = mesh.parent
+    mesh_parent_index = get_parent_index(mesh)
+
+    original_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=ORIGINAL_LOC)
+    reset_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=RESET_LOC)
+    parent_items_to((original_loc, reset_loc), mesh, inplace=False)
+    parent_items_to((original_loc, reset_loc), None, inplace=True)
+
+    parent_items_to((mesh, selection_loc), reset_loc, inplace=True)
+    reset_loc.select(replace=True)
+    lx.eval('transform.reset all')
+
     match_pos(selection_loc, mesh)
 
     normal_direction_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=NORMAL_DIRECTION_LOC)
@@ -455,9 +449,6 @@ def place_orient_z_axis_to_normal_locator(mesh: modo.Mesh, selection_mode: str) 
     parent_items_to((normal_direction_loc,), None, inplace=True)
 
     center_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=CENTER_LOC)
-    parent_items_to((center_loc,), mesh, inplace=False)
-    parent_items_to((center_loc,), None, inplace=True)
-
     center_loc.select(replace=True)
     normal_direction_loc.select()
     lx.eval('constraintDirection')
@@ -467,14 +458,15 @@ def place_orient_z_axis_to_normal_locator(mesh: modo.Mesh, selection_mode: str) 
 
     result_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=RESULT_LOC)
     parent_items_to((result_loc,), center_loc, inplace=False)
-    result_loc.select(replace=True)
-    lx.eval(f'item.editorColor {RESULT_LOC_COLOR}')
+    parent_items_to((result_loc,), reset_loc, inplace=True)
 
-    mesh_parent_index = get_parent_index(mesh)
-    parent_items_to((result_loc,), mesh.parent, index=mesh_parent_index, inplace=True)
+    parent_items_to((reset_loc,), original_loc, inplace=False)
+    parent_items_to((mesh,), mesh_parent, index=mesh_parent_index, inplace=True)
+    parent_items_to((result_loc,), None, inplace=True)
 
     remove_if_exist(normal_direction_loc, True)
     remove_if_exist(selection_loc, True)
     remove_if_exist(center_loc, True)
+    remove_if_exist(original_loc, True)
 
     return result_loc
