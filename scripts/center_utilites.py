@@ -30,7 +30,6 @@ from h3d_utilites.scripts.h3d_utils import (
     remove_if_exist,
 )
 
-from h3d_utilites.scripts.h3d_debug import h3dd
 
 COLOR_PROCESSED = 'orange'
 USERVAL_IGNORE_HIDDEN = 'h3d_propagate_ignore_hidden'
