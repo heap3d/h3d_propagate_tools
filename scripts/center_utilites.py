@@ -28,6 +28,8 @@ from h3d_utilites.scripts.h3d_utils import (
     match_scl,
     itype_str,
     remove_if_exist,
+    item_get_position,
+    item_set_position,
 )
 
 
@@ -40,6 +42,14 @@ VERTEX = SELECTION_MODE.VERTEX.value
 EDGE = SELECTION_MODE.EDGE.value
 POLYGON = SELECTION_MODE.POLYGON.value
 ITEM = SELECTION_MODE.ITEM.value
+
+SELECTION_LOC = 'selection loc'
+NORMAL_DIRECTION_LOC = 'normal direction loc'
+CENTER_LOC = 'center loc'
+RESULT_LOC = 'result loc'
+ORIGINAL_LOC = 'original loc'
+RESET_LOC = 'reset loc'
+RESULT_LOC_COLOR = 'red'
 
 
 def get_selected_components(mesh: modo.Mesh, selection_mode: str) -> list:
@@ -407,8 +417,6 @@ def orient_z_axis_to_normal(mesh: modo.Mesh, selection_mode: str) -> modo.Mesh:
 
 
 def place_orient_z_axis_to_normal_locator(mesh: modo.Mesh, selection_mode: str) -> modo.Item:
-    RESULT_LOC_COLOR = 'red'
-
     result_loc = create_oriented_z_axis_to_normal_locator(mesh, selection_mode)
     result_loc.select(replace=True)
     lx.eval(f'item.editorColor {RESULT_LOC_COLOR}')
@@ -417,12 +425,6 @@ def place_orient_z_axis_to_normal_locator(mesh: modo.Mesh, selection_mode: str) 
 
 
 def create_oriented_z_axis_to_normal_locator(mesh: modo.Mesh, selection_mode: str) -> modo.Item:
-    SELECTION_LOC = 'selection loc'
-    NORMAL_DIRECTION_LOC = 'normal direction loc'
-    CENTER_LOC = 'center loc'
-    RESULT_LOC = 'result loc'
-    ORIGINAL_LOC = 'original loc'
-    RESET_LOC = 'reset loc'
 
     selection_loc = create_loc_at_selection(mesh, selection_mode, SELECTION_LOC)
 
@@ -469,3 +471,66 @@ def create_oriented_z_axis_to_normal_locator(mesh: modo.Mesh, selection_mode: st
     remove_if_exist(original_loc, True)
 
     return result_loc
+
+
+def align_pos_x(mesh: modo.Mesh, selection_mode: str) -> modo.Mesh:
+    selection_loc = create_loc_at_selection(mesh, selection_mode, name=SELECTION_LOC)
+    center_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=CENTER_LOC)
+    parent_items_to((center_loc,), mesh, inplace=False)
+    parent_items_to((selection_loc,), center_loc, inplace=True)
+
+    result_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=RESULT_LOC)
+    parent_items_to((result_loc,), center_loc, inplace=False)
+
+    selection_pos = item_get_position(selection_loc)
+    result_pos = modo.Vector3(selection_pos.x, 0, 0)
+    item_set_position(result_loc, result_pos)
+    parent_items_to((result_loc,), None, inplace=True)
+    updated_mesh = align_center_to_item(mesh, result_loc)
+
+    remove_if_exist(center_loc, True)
+    remove_if_exist(result_loc, True)
+
+    return updated_mesh
+
+
+def align_pos_y(mesh: modo.Mesh, selection_mode: str) -> modo.Mesh:
+    selection_loc = create_loc_at_selection(mesh, selection_mode, name=SELECTION_LOC)
+    center_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=CENTER_LOC)
+    parent_items_to((center_loc,), mesh, inplace=False)
+    parent_items_to((selection_loc,), center_loc, inplace=True)
+
+    result_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=RESULT_LOC)
+    parent_items_to((result_loc,), center_loc, inplace=False)
+
+    selection_pos = item_get_position(selection_loc)
+    result_pos = modo.Vector3(0, selection_pos.y, 0)
+    item_set_position(result_loc, result_pos)
+    parent_items_to((result_loc,), None, inplace=True)
+    updated_mesh = align_center_to_item(mesh, result_loc)
+
+    remove_if_exist(center_loc, True)
+    remove_if_exist(result_loc, True)
+
+    return updated_mesh
+
+
+def align_pos_z(mesh: modo.Mesh, selection_mode: str) -> modo.Mesh:
+    selection_loc = create_loc_at_selection(mesh, selection_mode, name=SELECTION_LOC)
+    center_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=CENTER_LOC)
+    parent_items_to((center_loc,), mesh, inplace=False)
+    parent_items_to((selection_loc,), center_loc, inplace=True)
+
+    result_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=RESULT_LOC)
+    parent_items_to((result_loc,), center_loc, inplace=False)
+
+    selection_pos = item_get_position(selection_loc)
+    result_pos = modo.Vector3(0, 0, selection_pos.z)
+    item_set_position(result_loc, result_pos)
+    parent_items_to((result_loc,), None, inplace=True)
+    updated_mesh = align_center_to_item(mesh, result_loc)
+
+    remove_if_exist(center_loc, True)
+    remove_if_exist(result_loc, True)
+
+    return updated_mesh

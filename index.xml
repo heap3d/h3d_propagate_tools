@@ -19,6 +19,9 @@
 		<source target="h3d_propagate_tools/scripts/set_center_pos_rot_to_selection.py">scripts/set_center_pos_rot_to_selection.py</source>
 		<source target="h3d_propagate_tools/scripts/set_center_pos_to_item.py">scripts/set_center_pos_to_item.py</source>
 		<source target="h3d_propagate_tools/scripts/set_center_pos_to_selection.py">scripts/set_center_pos_to_selection.py</source>
+		<source target="h3d_propagate_tools/scripts/set_center_pos_x.py">scripts/set_center_pos_x.py</source>
+		<source target="h3d_propagate_tools/scripts/set_center_pos_y.py">scripts/set_center_pos_y.py</source>
+		<source target="h3d_propagate_tools/scripts/set_center_pos_z.py">scripts/set_center_pos_z.py</source>
 		<source target="h3d_propagate_tools/scripts/update_instances.py">scripts/update_instances.py</source>
 		<source target="h3d_propagate_tools/index.cfg">index.cfg</source>
 	</kit>
