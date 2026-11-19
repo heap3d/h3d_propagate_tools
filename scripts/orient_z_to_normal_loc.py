@@ -9,11 +9,14 @@
 
 import modo
 import modo.constants as c
+import lx
 
 from h3d_propagate_tools.scripts.center_utilites import (
     get_selected_components,
     numparents,
     place_orient_z_axis_to_normal_locator,
+    RESULT_LOC_NAME_PREFIX,
+    RESULT_LOC_COLOR,
 )
 
 from h3d_utilites.scripts.h3d_utils import (
@@ -47,6 +50,9 @@ def main():
         select_components(selected_components[mesh])
 
         result_loc = place_orient_z_axis_to_normal_locator(mesh, selection_mode)
+        result_loc.name = f'{RESULT_LOC_NAME_PREFIX}{mesh.name}'
+        result_loc.select(replace=True)
+        lx.eval(f'item.editorColor {RESULT_LOC_COLOR}')
         result_locators.append(result_loc)
 
     select_if_exists(result_locators)

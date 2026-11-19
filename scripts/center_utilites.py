@@ -46,10 +46,10 @@ ITEM = SELECTION_MODE.ITEM.value
 SELECTION_LOC = 'selection loc'
 NORMAL_DIRECTION_LOC = 'normal direction loc'
 CENTER_LOC = 'center loc'
-RESULT_LOC = 'result loc'
 ORIGINAL_LOC = 'original loc'
 RESET_LOC = 'reset loc'
 RESULT_LOC_COLOR = 'red'
+RESULT_LOC_NAME_PREFIX = 'selection loc '
 
 
 def get_selected_components(mesh: modo.Mesh, selection_mode: str) -> list:
@@ -457,7 +457,7 @@ def create_oriented_z_axis_to_normal_locator(mesh: modo.Mesh, selection_mode: st
     lx.eval('item.channel chanModify$up.Y 0.0')
     lx.eval('item.channel chanModify$up.Z 1.0')
 
-    result_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=RESULT_LOC)
+    result_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=f'{RESULT_LOC_NAME_PREFIX}{mesh.name}')
     parent_items_to((result_loc,), center_loc, inplace=False)
     parent_items_to((result_loc,), reset_loc, inplace=True)
 
@@ -479,7 +479,7 @@ def align_pos_x(mesh: modo.Mesh, selection_mode: str) -> modo.Mesh:
     parent_items_to((center_loc,), mesh, inplace=False)
     parent_items_to((selection_loc,), center_loc, inplace=True)
 
-    result_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=RESULT_LOC)
+    result_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=f'{RESULT_LOC_NAME_PREFIX}{mesh.name}')
     parent_items_to((result_loc,), center_loc, inplace=False)
 
     selection_pos = item_get_position(selection_loc)
@@ -500,7 +500,7 @@ def align_pos_y(mesh: modo.Mesh, selection_mode: str) -> modo.Mesh:
     parent_items_to((center_loc,), mesh, inplace=False)
     parent_items_to((selection_loc,), center_loc, inplace=True)
 
-    result_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=RESULT_LOC)
+    result_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=f'{RESULT_LOC_NAME_PREFIX}{mesh.name}')
     parent_items_to((result_loc,), center_loc, inplace=False)
 
     selection_pos = item_get_position(selection_loc)
@@ -521,7 +521,7 @@ def align_pos_z(mesh: modo.Mesh, selection_mode: str) -> modo.Mesh:
     parent_items_to((center_loc,), mesh, inplace=False)
     parent_items_to((selection_loc,), center_loc, inplace=True)
 
-    result_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=RESULT_LOC)
+    result_loc = modo.Scene().addItem(itype=c.LOCATOR_TYPE, name=f'{RESULT_LOC_NAME_PREFIX}{mesh.name}')
     parent_items_to((result_loc,), center_loc, inplace=False)
 
     selection_pos = item_get_position(selection_loc)

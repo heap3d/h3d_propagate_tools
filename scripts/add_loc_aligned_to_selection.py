@@ -5,11 +5,12 @@
 # --------------------------------
 # modo python
 # EMAG
-# set item center position and orientation by component selection
+# add locator aligned to selection
 # ================================
 
 import modo
 import modo.constants as c
+import lx
 
 from h3d_utilites.scripts.h3d_utils import (
     get_selection_mode,
@@ -22,10 +23,12 @@ from h3d_propagate_tools.scripts.center_utilites import (
     numparents,
     create_loc_at_selection,
     select_components,
+    RESULT_LOC_NAME_PREFIX,
+    RESULT_LOC_COLOR,
 )
 
 
-@execution_time_alarm('Set Item Center > Aligned To Selection')
+@execution_time_alarm('Set Item Center > Add Locator Aligned To Selection')
 def main():
     selected_meshes: list[modo.Mesh] = modo.Scene().selectedByType(itype=c.MESH_TYPE)
     selected_meshes.sort(key=numparents, reverse=True)
@@ -44,7 +47,9 @@ def main():
             continue
 
         select_components(mesh, select_type, selected_components[mesh])
-        new_locator = create_loc_at_selection(mesh, select_type)
+        new_locator = create_loc_at_selection(mesh, select_type, name=f'{RESULT_LOC_NAME_PREFIX}{mesh.name}')
+        new_locator.select(replace=True)
+        lx.eval(f'item.editorColor {RESULT_LOC_COLOR}')
 
         new_locators.append(new_locator)
 
